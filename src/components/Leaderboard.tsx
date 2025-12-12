@@ -1,0 +1,227 @@
+import { useState, useEffect } from 'react';
+import { getAllAttendees, type Attendee } from '../services/attendeeService';
+import { getWinners, type Winner } from '../services/firebaseService';
+
+interface LeaderboardProps {
+    puzzleId: string;
+}
+
+export default function Leaderboard({ puzzleId }: LeaderboardProps) {
+    const [activeTab, setActiveTab] = useState<'winners' | 'attendees'>('winners');
+    const [winners, setWinners] = useState<Winner[]>([]);
+    const [attendees, setAttendees] = useState<Attendee[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadData();
+    }, [puzzleId]);
+
+    const loadData = async () => {
+        setLoading(true);
+        try {
+            const [winnersData, attendeesData] = await Promise.all([
+                getWinners(puzzleId),
+                getAllAttendees(puzzleId)
+            ]);
+            setWinners(winnersData);
+            setAttendees(attendeesData);
+        } catch (error) {
+            console.error('Error loading leaderboard data:', error);
+        }
+        setLoading(false);
+    };
+
+    return (
+        <div className="leaderboard-container" style={{
+            backgroundColor: '#1e293b',
+            borderRadius: '8px',
+            padding: '20px',
+            marginTop: '20px'
+        }}>
+            {/* Tab Headers */}
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', borderBottom: '2px solid #334155' }}>
+                <button
+                    onClick={() => setActiveTab('winners')}
+                    style={{
+                        padding: '10px 20px',
+                        backgroundColor: activeTab === 'winners' ? '#3b82f6' : 'transparent',
+                        color: 'white',
+                        border: 'none',
+                        borderBottom: activeTab === 'winners' ? '3px solid #3b82f6' : 'none',
+                        cursor: 'pointer',
+                        fontSize: '1rem',
+                        fontWeight: activeTab === 'winners' ? 'bold' : 'normal',
+                        transition: 'all 0.3s'
+                    }}
+                >
+                    🏆 Winners ({winners.length})
+                </button>
+                <button
+                    onClick={() => setActiveTab('attendees')}
+                    style={{
+                        padding: '10px 20px',
+                        backgroundColor: activeTab === 'attendees' ? '#3b82f6' : 'transparent',
+                        color: 'white',
+                        border: 'none',
+                        borderBottom: activeTab === 'attendees' ? '3px solid #3b82f6' : 'none',
+                        cursor: 'pointer',
+                        fontSize: '1rem',
+                        fontWeight: activeTab === 'attendees' ? 'bold' : 'normal',
+                        transition: 'all 0.3s'
+                    }}
+                >
+                    👥 All Attendees ({attendees.length})
+                </button>
+            </div>
+
+            {loading ? (
+                <div style={{ textAlign: 'center', color: '#94a3b8', padding: '40px' }}>
+                    Loading...
+                </div>
+            ) : (
+                <>
+                    {/* Winners Tab */}
+                    {activeTab === 'winners' && (
+                        <div className="winners-list">
+                            <h3 style={{ color: '#94a3b8', marginBottom: '15px' }}>
+                                First-Time Success Winners
+                            </h3>
+                            {winners.length === 0 ? (
+                                <p style={{ color: '#64748b', textAlign: 'center', padding: '20px' }}>
+                                    No winners yet. Be the first! 🎯
+                                </p>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    {winners.map((winner, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                padding: '15px',
+                                                backgroundColor: '#0f172a',
+                                                borderRadius: '8px',
+                                                borderLeft: index < 3 ? '4px solid #fbbf24' : '4px solid #3b82f6'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                                <span style={{
+                                                    fontSize: '1.5rem',
+                                                    fontWeight: 'bold',
+                                                    color: index === 0 ? '#fbbf24' : index === 1 ? '#94a3b8' : index === 2 ? '#cd7f32' : '#64748b'
+                                                }}>
+                                                    #{index + 1}
+                                                </span>
+                                                <div>
+                                                    <div style={{ color: 'white', fontWeight: 'bold' }}>
+                                                        {winner.name}
+                                                    </div>
+                                                    <div style={{ color: '#64748b', fontSize: '0.875rem' }}>
+                                                        {winner.email}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style={{ textAlign: 'right' }}>
+                                                <div style={{ color: '#10b981', fontWeight: 'bold' }}>
+                                                    {winner.score}%
+                                                </div>
+                                                <div style={{ color: '#64748b', fontSize: '0.75rem' }}>
+                                                    {new Date(winner.completedAt).toLocaleDateString()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Attendees Tab */}
+                    {activeTab === 'attendees' && (
+                        <div className="attendees-list">
+                            <h3 style={{ color: '#94a3b8', marginBottom: '15px' }}>
+                                All Participants & Attempt Counts
+                            </h3>
+                            {attendees.length === 0 ? (
+                                <p style={{ color: '#64748b', textAlign: 'center', padding: '20px' }}>
+                                    No attendees yet.
+                                </p>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    {attendees.map((attendee, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                padding: '15px',
+                                                backgroundColor: '#0f172a',
+                                                borderRadius: '8px',
+                                                borderLeft: attendee.firstAttemptSuccess ? '4px solid #10b981' : '4px solid #ef4444'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flex: 1 }}>
+                                                <span style={{
+                                                    fontSize: '1.2rem',
+                                                    fontWeight: 'bold',
+                                                    color: '#64748b',
+                                                    minWidth: '40px'
+                                                }}>
+                                                    #{index + 1}
+                                                </span>
+                                                <div style={{ flex: 1 }}>
+                                                    <div style={{ color: 'white', fontWeight: 'bold' }}>
+                                                        {attendee.name}
+                                                    </div>
+                                                    <div style={{ color: '#64748b', fontSize: '0.875rem' }}>
+                                                        {attendee.email}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style={{ textAlign: 'right', display: 'flex', gap: '20px', alignItems: 'center' }}>
+                                                <div>
+                                                    <div style={{ color: '#3b82f6', fontWeight: 'bold', fontSize: '1.25rem' }}>
+                                                        {attendee.attemptCount}
+                                                    </div>
+                                                    <div style={{ color: '#64748b', fontSize: '0.75rem' }}>
+                                                        {attendee.attemptCount === 1 ? 'attempt' : 'attempts'}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    {attendee.firstAttemptSuccess ? (
+                                                        <span style={{
+                                                            backgroundColor: '#10b981',
+                                                            color: 'white',
+                                                            padding: '4px 8px',
+                                                            borderRadius: '4px',
+                                                            fontSize: '0.75rem',
+                                                            fontWeight: 'bold'
+                                                        }}>
+                                                            ✓ 1st Try
+                                                        </span>
+                                                    ) : (
+                                                        <span style={{
+                                                            backgroundColor: '#64748b',
+                                                            color: 'white',
+                                                            padding: '4px 8px',
+                                                            borderRadius: '4px',
+                                                            fontSize: '0.75rem'
+                                                        }}>
+                                                            Retried
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
+    );
+}

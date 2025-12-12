@@ -1,0 +1,184 @@
+/* AnswerKey.css */
+.answer-key-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Inter', sans-serif;
+    background: white;
+    color: #1a1a1a;
+}
+
+.print-controls {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f3f4f6;
+    border-radius: 8px;
+}
+
+.print-button {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.print-button:hover {
+    background-color: #1d4ed8;
+}
+
+.answer-key-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    border-bottom: 3px solid #2563eb;
+    padding-bottom: 1rem;
+}
+
+.answer-key-header h1 {
+    margin: 0;
+    color: #111827;
+}
+
+.generated-date {
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+.puzzle-item {
+    margin-bottom: 2rem;
+    break-inside: avoid;
+    /* Prevent breaking inside puzzle block */
+}
+
+.puzzle-header {
+    background: #f8fafc;
+    padding: 1rem;
+    border-left: 4px solid #2563eb;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.puzzle-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.puzzle-type {
+    font-size: 0.875rem;
+    color: #64748b;
+    background: #e2e8f0;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.mcq-item {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    break-inside: avoid;
+}
+
+.question-text {
+    font-size: 1.1rem;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+}
+
+.options-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.option-item {
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.correct-answer {
+    background-color: #d1fae5;
+    /* Light green */
+    color: #065f46;
+    font-weight: 600;
+    border: 1px solid #34d399;
+}
+
+.option-marker {
+    margin-right: 0.5rem;
+    display: inline-block;
+}
+
+.explanation {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: #4b5563;
+    background: #fffbeb;
+    /* Light yellow */
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.puzzle-divider {
+    border: 0;
+    border-top: 1px dashed #cbd5e1;
+    margin: 2rem 0;
+}
+
+.answer-key-footer {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
+}
+
+/* Print Specific Styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .answer-key-container,
+    .answer-key-container * {
+        visibility: visible;
+    }
+
+    .answer-key-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .puzzle-header {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .correct-answer {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        border: 1px solid #000;
+        /* High contrast for B&W printers */
+    }
+}

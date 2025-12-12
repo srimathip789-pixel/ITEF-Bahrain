@@ -1,0 +1,87 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - heading "Event Registration" [level=2] [ref=e8]
+      - paragraph [ref=e9]: Please enter your details to participate
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Full Name
+        - textbox "Full Name" [ref=e13]:
+          - /placeholder: Enter your full name
+      - generic [ref=e14]:
+        - generic [ref=e15]: Email Address
+        - textbox "Email Address" [ref=e16]:
+          - /placeholder: Enter your email
+      - generic [ref=e17]:
+        - generic [ref=e18]: Mobile Number
+        - textbox "Mobile Number" [ref=e19]:
+          - /placeholder: Enter your mobile number
+      - button "Start Playing" [ref=e20] [cursor=pointer]
+  - banner [ref=e21]:
+    - img "ITEF Bahrain" [ref=e22]
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - link "Back to Puzzles" [ref=e26] [cursor=pointer]:
+          - /url: /puzzles
+          - img [ref=e27]
+          - text: Back to Puzzles
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - generic [ref=e31]: 🔤
+            - heading "Engineering Wordle" [level=1] [ref=e32]
+          - paragraph [ref=e33]: Guess the 5-letter engineering term in 6 tries.
+          - generic [ref=e35]: "Attempt #1"
+        - button "Share" [ref=e37] [cursor=pointer]:
+          - img [ref=e38]
+          - generic [ref=e44]: Share
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]: L
+            - generic [ref=e50]: A
+            - generic [ref=e51]: S
+            - generic [ref=e52]: E
+            - generic [ref=e53]: R
+          - generic [ref=e54]:
+            - generic [ref=e55]: D
+            - generic [ref=e56]: I
+            - generic [ref=e57]: O
+            - generic [ref=e58]: D
+            - generic [ref=e59]: E
+        - generic [ref=e84]:
+          - generic [ref=e85]:
+            - button "Q" [ref=e86] [cursor=pointer]
+            - button "W" [ref=e87] [cursor=pointer]
+            - button "E" [ref=e88] [cursor=pointer]
+            - button "R" [ref=e89] [cursor=pointer]
+            - button "T" [ref=e90] [cursor=pointer]
+            - button "Y" [ref=e91] [cursor=pointer]
+            - button "U" [ref=e92] [cursor=pointer]
+            - button "I" [ref=e93] [cursor=pointer]
+            - button "O" [ref=e94] [cursor=pointer]
+            - button "P" [ref=e95] [cursor=pointer]
+          - generic [ref=e96]:
+            - button "A" [ref=e97] [cursor=pointer]
+            - button "S" [ref=e98] [cursor=pointer]
+            - button "D" [ref=e99] [cursor=pointer]
+            - button "F" [ref=e100] [cursor=pointer]
+            - button "G" [ref=e101] [cursor=pointer]
+            - button "H" [ref=e102] [cursor=pointer]
+            - button "J" [ref=e103] [cursor=pointer]
+            - button "K" [ref=e104] [cursor=pointer]
+            - button "L" [ref=e105] [cursor=pointer]
+          - generic [ref=e106]:
+            - button "Z" [ref=e107] [cursor=pointer]
+            - button "X" [ref=e108] [cursor=pointer]
+            - button "C" [ref=e109] [cursor=pointer]
+            - button "V" [ref=e110] [cursor=pointer]
+            - button "B" [ref=e111] [cursor=pointer]
+            - button "N" [ref=e112] [cursor=pointer]
+            - button "M" [ref=e113] [cursor=pointer]
+            - button "⌫" [ref=e114] [cursor=pointer]
+            - button "↵" [ref=e115] [cursor=pointer]
+```
