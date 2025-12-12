@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { PuzzleService } from '../services/PuzzleService';
-import { addWinner } from '../services/firebaseService';
+import { addWinner, trackAttempt } from '../services/firebaseService';
 import type { Puzzle } from '../types/PuzzleTypes';
 import { PuzzleType } from '../types/PuzzleTypes';
 import ConnectDotsPuzzle from '../components/puzzles/ConnectDotsPuzzle';
@@ -63,6 +63,24 @@ export default function PuzzleGame() {
             timeSpent,
             showHints
         );
+
+        // Save attempt to Firebase for attendees tracking
+        try {
+            const userDetails = localStorage.getItem('itef_user_details');
+            if (userDetails) {
+                const user = JSON.parse(userDetails);
+                await trackAttempt(
+                    user.email || 'guest',
+                    puzzle.id,
+                    isCorrect,
+                    user.name,
+                    user.email
+                );
+                console.log('Attempt tracked in Firebase!');
+            }
+        } catch (error) {
+            console.error('Error tracking attempt to Firebase:', error);
+        }
 
         // Save winner to Firebase if first attempt success without hints AND score >= 90%
         if (isCorrect && currentAttempt === 1 && !showHints && finalScore >= 90) {

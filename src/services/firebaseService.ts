@@ -112,7 +112,13 @@ export async function getAllWinners(limitCount: number = 100): Promise<Winner[]>
 }
 
 // Track user attempt
-export async function trackAttempt(userId: string, puzzleId: string, isSuccess: boolean): Promise<UserAttempt> {
+export async function trackAttempt(
+    userId: string,
+    puzzleId: string,
+    isSuccess: boolean,
+    name?: string,
+    email?: string
+): Promise<UserAttempt> {
     try {
         const attemptRef = doc(db, 'attempts', `${userId}_${puzzleId}`);
         const attemptDoc = await getDoc(attemptRef);
@@ -144,6 +150,8 @@ export async function trackAttempt(userId: string, puzzleId: string, isSuccess: 
 
             await setDoc(attemptRef, {
                 ...newAttempt,
+                name: name || 'Anonymous',
+                email: email || 'N/A',
                 lastAttemptAt: serverTimestamp()
             });
 
