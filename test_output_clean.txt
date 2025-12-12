@@ -1,0 +1,45 @@
+
+Running 1 test using 1 worker
+
+[1A[2K[1/1] [chromium] › tests\attendee_tracking.spec.ts:4:5 › Attendee Tracking System › should track multiple unique attendees
+[1A[2K[chromium] › tests\attendee_tracking.spec.ts:4:5 › Attendee Tracking System › should track multiple unique attendees
+BROWSER LOG: [vite] connecting...
+
+[1A[2KBROWSER LOG: [vite] connected.
+
+[1A[2KBROWSER LOG: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+[1A[2KBROWSER LOG: Fetching registrations from Firebase...
+
+[1A[2KBROWSER LOG: Fetching registrations from Firebase...
+
+[1A[2K  1) [chromium] › tests\attendee_tracking.spec.ts:4:5 › Attendee Tracking System › should track multiple unique attendees 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.registration-modal')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.registration-modal')[22m
+
+
+      17 |         // Wait for registration modal
+      18 |         const modal = page.locator('.registration-modal');
+    > 19 |         await expect(modal).toBeVisible();
+         |                             ^
+      20 |
+      21 |         // Fill registration
+      22 |         await page.fill('input[name="name"]', user1.name);
+        at C:\Users\Sri Mathi\OneDrive\Desktop\RESUME\itef-quiz\tests\attendee_tracking.spec.ts:19:29
+
+    Error Context: test-results\attendee_tracking-Attendee-22c8f-k-multiple-unique-attendees-chromium\error-context.md
+
+
+[1A[2K  1 failed
+    [chromium] › tests\attendee_tracking.spec.ts:4:5 › Attendee Tracking System › should track multiple unique attendees 
+
+[36m  Serving HTML report at http://localhost:62285. Press Ctrl+C to quit.[39m

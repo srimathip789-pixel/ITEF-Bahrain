@@ -21,16 +21,26 @@ export async function getAllAttendees(puzzleId?: string): Promise<Attendee[]> {
         const registrationsSnapshot = await getDocs(registrationsRef);
 
         registrationsSnapshot.forEach((doc) => {
-            const data = doc.data();
-            attendeesMap.set(data.email, {
-                userId: data.email,
-                name: data.name || 'Anonymous',
-                email: data.email || 'N/A',
-                puzzleId: 'registered',
-                attemptCount: data.attemptCount || 0,
-                lastAttemptAt: data.registeredAt?.toDate() || new Date(),
-                firstAttemptSuccess: false
-            });
+            try {
+                const data = doc.data();
+
+                let registeredAt = new Date();
+                if (data.registeredAt && typeof data.registeredAt.toDate === 'function') {
+                    registeredAt = data.registeredAt.toDate();
+                }
+
+                attendeesMap.set(data.email, {
+                    userId: data.email,
+                    name: data.name || 'Anonymous',
+                    email: data.email || 'N/A',
+                    puzzleId: 'registered',
+                    attemptCount: data.attemptCount || 0,
+                    lastAttemptAt: registeredAt,
+                    firstAttemptSuccess: false
+                });
+            } catch (err) {
+                console.error('Error processing registration doc:', doc.id, err);
+            }
         });
 
         // Then, fetch all attempts and update the map
@@ -38,30 +48,40 @@ export async function getAllAttendees(puzzleId?: string): Promise<Attendee[]> {
         const attemptsSnapshot = await getDocs(attemptsRef);
 
         attemptsSnapshot.forEach((doc) => {
-            const data = doc.data();
-            // Filter by puzzleId if provided
-            if (puzzleId && data.puzzleId !== puzzleId) {
-                return;
-            }
+            try {
+                const data = doc.data();
+                // Filter by puzzleId if provided
+                if (puzzleId && data.puzzleId !== puzzleId) {
+                    return;
+                }
 
-            const email = data.email || data.userId;
-            const existing = attendeesMap.get(email);
+                const email = data.email || data.userId;
+                const existing = attendeesMap.get(email);
 
-            // Update or add the attendee with attempt info
-            if (existing) {
-                existing.attemptCount = Math.max(existing.attemptCount, data.attemptCount || 1);
-                existing.puzzleId = data.puzzleId || existing.puzzleId;
-                existing.firstAttemptSuccess = existing.firstAttemptSuccess || data.firstAttemptSuccess;
-            } else {
-                attendeesMap.set(email, {
-                    userId: data.userId,
-                    name: data.name || 'Anonymous',
-                    email: data.email || 'N/A',
-                    puzzleId: data.puzzleId,
-                    attemptCount: data.attemptCount || 1,
-                    lastAttemptAt: data.lastAttemptAt?.toDate() || new Date(),
-                    firstAttemptSuccess: data.firstAttemptSuccess
-                });
+                let lastAttemptAt = new Date();
+                if (data.lastAttemptAt && typeof data.lastAttemptAt.toDate === 'function') {
+                    lastAttemptAt = data.lastAttemptAt.toDate();
+                }
+
+                // Update or add the attendee with attempt info
+                if (existing) {
+                    existing.attemptCount = Math.max(existing.attemptCount, data.attemptCount || 1);
+                    existing.puzzleId = data.puzzleId || existing.puzzleId;
+                    existing.lastAttemptAt = lastAttemptAt;
+                    existing.firstAttemptSuccess = existing.firstAttemptSuccess || data.firstAttemptSuccess;
+                } else {
+                    attendeesMap.set(email, {
+                        userId: data.userId,
+                        name: data.name || 'Anonymous',
+                        email: data.email || 'N/A',
+                        puzzleId: data.puzzleId,
+                        attemptCount: data.attemptCount || 1,
+                        lastAttemptAt: lastAttemptAt,
+                        firstAttemptSuccess: data.firstAttemptSuccess
+                    });
+                }
+            } catch (err) {
+                console.error('Error processing attempt doc:', doc.id, err);
             }
         });
 
