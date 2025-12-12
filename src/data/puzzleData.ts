@@ -1,5 +1,12 @@
 import { PuzzleType, PuzzleDifficulty, type Puzzle, type MCQQuestion } from '../types/PuzzleTypes';
 
+// Get a stable daily word index (same word for entire day)
+const getDailyWordIndex = (wordCount: number): number => {
+    const today = new Date();
+    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    return seed % wordCount;
+};
+
 // Engineering Wordle - Multiple words to choose from
 const engineeringWords = ['DIODE', 'RELAY', 'VALVE', 'MOTOR', 'LASER', 'SERVO', 'ALLOY', 'FORCE'];
 
@@ -1037,7 +1044,7 @@ export const allPuzzles: Puzzle[] = [
         type: PuzzleType.ENGINEERING_WORDLE,
         difficulty: PuzzleDifficulty.MEDIUM,
         icon: '🔤',
-        targetWord: engineeringWords[Math.floor(Math.random() * engineeringWords.length)],
+        targetWord: engineeringWords[getDailyWordIndex(engineeringWords.length)],
         hints: [
             'Think about common engineering components and devices'
         ]
