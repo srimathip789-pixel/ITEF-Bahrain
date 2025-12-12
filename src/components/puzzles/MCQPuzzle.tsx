@@ -62,7 +62,7 @@ export default function MCQPuzzle({ questions, onComplete, showHints = false }: 
     return (
         <div className="mcq-puzzle">
             <div className="quiz-header">
-                <div className="question-progress">
+                <div className="question-progress" data-testid="question-number">
                     Question {currentQuestionIndex + 1} of {totalQuestions}
                 </div>
                 <div className="progress-bar">
@@ -71,13 +71,13 @@ export default function MCQPuzzle({ questions, onComplete, showHints = false }: 
                         style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
                     />
                 </div>
-                <div className="answered-count">
-                    Answered: {getAnsweredCount()} / {totalQuestions}
+                <div className="answered-count" data-testid="progress-indicator">
+                    {getAnsweredCount()}/{totalQuestions}
                 </div>
             </div>
 
             <div className="question-card">
-                <h3 className="question-text">{currentQuestion.question}</h3>
+                <h3 className="question-text" data-testid="question-text">{currentQuestion.question}</h3>
 
                 <div className="choices-container">
                     {currentQuestion.choices.map(choice => (
@@ -86,6 +86,7 @@ export default function MCQPuzzle({ questions, onComplete, showHints = false }: 
                             className={`choice-button ${selectedAnswers[currentQuestion.id] === choice.id ? 'selected' : ''
                                 }`}
                             onClick={() => handleChoiceSelect(choice.id)}
+                            data-testid="choice-option"
                         >
                             <span className="choice-label">{choice.id.toUpperCase()}</span>
                             <span className="choice-text">{choice.text}</span>
@@ -94,7 +95,7 @@ export default function MCQPuzzle({ questions, onComplete, showHints = false }: 
                 </div>
 
                 {showHints && currentQuestion.explanation && (
-                    <div className="hint-box">
+                    <div className="hint-box" data-testid="explanation">
                         <strong>💡 Hint:</strong> {currentQuestion.explanation}
                     </div>
                 )}
@@ -105,6 +106,7 @@ export default function MCQPuzzle({ questions, onComplete, showHints = false }: 
                     className="nav-button"
                     onClick={handlePrevious}
                     disabled={currentQuestionIndex === 0}
+                    data-testid="back-button"
                 >
                     ← Previous
                 </button>
@@ -113,7 +115,8 @@ export default function MCQPuzzle({ questions, onComplete, showHints = false }: 
                     <button
                         className="submit-button"
                         onClick={handleSubmit}
-                        disabled={!isCurrentQuestionAnswered()}
+                        disabled={Object.keys(selectedAnswers).length < totalQuestions}
+                        data-testid="submit-button"
                     >
                         Submit Quiz
                     </button>
@@ -122,6 +125,7 @@ export default function MCQPuzzle({ questions, onComplete, showHints = false }: 
                         className="nav-button"
                         onClick={handleNext}
                         disabled={!isCurrentQuestionAnswered()}
+                        data-testid="next-button"
                     >
                         Next →
                     </button>

@@ -110,6 +110,7 @@ export default function WordlePuzzle({ targetWord, onComplete }: WordlePuzzlePro
                     return (
                         <div
                             key={i}
+                            className="wordle-cell"
                             style={{
                                 width: '100%',
                                 aspectRatio: '1/1',

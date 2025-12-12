@@ -1,5 +1,5 @@
 import { db } from '../config/firebase';
-import { collection, query, where, getDocs, orderBy } from 'firestore';
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 
 export interface Attendee {
     userId: string;
@@ -11,15 +11,20 @@ export interface Attendee {
     firstAttemptSuccess: boolean;
 }
 
-// Get all attendees for a specific puzzle
-export async function getAllAttendees(puzzleId: string): Promise<Attendee[]> {
+// Get all attendees - optionally filtered by puzzle
+export async function getAllAttendees(puzzleId?: string): Promise<Attendee[]> {
     try {
         const attemptsRef = collection(db, 'attempts');
-        const q = query(
-            attemptsRef,
-            where('puzzleId', '==', puzzleId),
-            orderBy('attemptCount', 'desc')
-        );
+        const q = puzzleId
+            ? query(
+                attemptsRef,
+                where('puzzleId', '==', puzzleId),
+                orderBy('attemptCount', 'desc')
+            )
+            : query(
+                attemptsRef,
+                orderBy('attemptCount', 'desc')
+            );
 
         const querySnapshot = await getDocs(q);
         const attendees: Attendee[] = [];

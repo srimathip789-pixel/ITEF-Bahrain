@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PuzzleService } from '../services/PuzzleService';
 import PuzzleCard from '../components/puzzles/PuzzleCard';
-import WinnersList from '../components/puzzles/WinnersList';
+import Leaderboard from '../components/Leaderboard';
 import { PuzzleDifficulty } from '../types/PuzzleTypes';
 import { Brain, Trophy, Target, Zap } from 'lucide-react';
 
@@ -97,9 +97,9 @@ export default function PuzzleHub() {
                 ))}
             </div>
 
-            {/* Winners Section */}
+            {/* Leaderboard Section with tabs */}
             <div className="winners-section">
-                <WinnersList limit={5} />
+                <Leaderboard />
                 <Link to="/puzzles/winners" className="view-all-winners">
                     View All Winners →
                 </Link>
@@ -107,3 +107,4 @@ export default function PuzzleHub() {
         </div>
     );
 }
+

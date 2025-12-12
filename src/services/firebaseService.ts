@@ -80,6 +80,37 @@ export async function getWinners(puzzleId: string, limitCount: number = 50): Pro
     }
 }
 
+// Get all winners across all puzzles
+export async function getAllWinners(limitCount: number = 100): Promise<Winner[]> {
+    try {
+        const winnersRef = collection(db, 'winners');
+        const q = query(
+            winnersRef,
+            orderBy('completedAt', 'desc'),
+            limit(limitCount)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const winners: Winner[] = [];
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            winners.push({
+                name: data.name,
+                email: data.email,
+                puzzleId: data.puzzleId,
+                completedAt: data.completedAt?.toDate() || new Date(),
+                score: data.score
+            });
+        });
+
+        return winners;
+    } catch (error) {
+        console.error('Error getting all winners:', error);
+        return [];
+    }
+}
+
 // Track user attempt
 export async function trackAttempt(userId: string, puzzleId: string, isSuccess: boolean): Promise<UserAttempt> {
     try {

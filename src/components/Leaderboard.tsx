@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { getAllAttendees, type Attendee } from '../services/attendeeService';
-import { getWinners, type Winner } from '../services/firebaseService';
+import { getWinners, getAllWinners, type Winner } from '../services/firebaseService';
 
 interface LeaderboardProps {
-    puzzleId: string;
+    puzzleId?: string;
 }
 
 export default function Leaderboard({ puzzleId }: LeaderboardProps) {
@@ -20,11 +20,11 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
         setLoading(true);
         try {
             const [winnersData, attendeesData] = await Promise.all([
-                getWinners(puzzleId),
-                getAllAttendees(puzzleId)
+                puzzleId ? getWinners(puzzleId) : getAllWinners(),
+                puzzleId ? getAllAttendees(puzzleId) : getAllAttendees()
             ]);
-            setWinners(winnersData);
-            setAttendees(attendeesData);
+            setWinners(winnersData || []);
+            setAttendees(attendeesData || []);
         } catch (error) {
             console.error('Error loading leaderboard data:', error);
         }
@@ -42,6 +42,7 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
             <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', borderBottom: '2px solid #334155' }}>
                 <button
                     onClick={() => setActiveTab('winners')}
+                    data-testid="winners-tab"
                     style={{
                         padding: '10px 20px',
                         backgroundColor: activeTab === 'winners' ? '#3b82f6' : 'transparent',
@@ -58,6 +59,7 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                 </button>
                 <button
                     onClick={() => setActiveTab('attendees')}
+                    data-testid="attendees-tab"
                     style={{
                         padding: '10px 20px',
                         backgroundColor: activeTab === 'attendees' ? '#3b82f6' : 'transparent',
@@ -75,19 +77,19 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
             </div>
 
             {loading ? (
-                <div style={{ textAlign: 'center', color: '#94a3b8', padding: '40px' }}>
+                <div style={{ textAlign: 'center', color: '#94a3b8', padding: '40px' }} data-testid="loading">
                     Loading...
                 </div>
             ) : (
                 <>
                     {/* Winners Tab */}
                     {activeTab === 'winners' && (
-                        <div className="winners-list">
+                        <div className="winners-list" data-testid="winners-list">
                             <h3 style={{ color: '#94a3b8', marginBottom: '15px' }}>
                                 First-Time Success Winners
                             </h3>
                             {winners.length === 0 ? (
-                                <p style={{ color: '#64748b', textAlign: 'center', padding: '20px' }}>
+                                <p style={{ color: '#64748b', textAlign: 'center', padding: '20px' }} data-testid="no-winners-message">
                                     No winners yet. Be the first! 🎯
                                 </p>
                             ) : (
@@ -139,7 +141,7 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
 
                     {/* Attendees Tab */}
                     {activeTab === 'attendees' && (
-                        <div className="attendees-list">
+                        <div className="attendees-list" data-testid="attendees-list">
                             <h3 style={{ color: '#94a3b8', marginBottom: '15px' }}>
                                 All Participants & Attempt Counts
                             </h3>

@@ -1,0 +1,14 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:5173",
+      "localStorage": [
+        {
+          "name": "itef_user_details",
+          "value": "{\"name\":\"Test User\",\"email\":\"test@example.com\",\"mobile\":\"12345678\"}"
+        }
+      ]
+    }
+  ]
+}

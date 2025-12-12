@@ -81,7 +81,7 @@ export default function PuzzleGame() {
     const renderPuzzle = () => {
         if (gameComplete) {
             return (
-                <div className={`puzzle-result ${isSuccess ? 'success' : 'failure'}`}>
+                <div className={`puzzle-result ${isSuccess ? 'success' : 'failure'}`} data-testid="quiz-results">
                     <div className="result-icon">
                         {isSuccess ? (
                             <CheckCircle size={64} className="success-icon" />
@@ -90,14 +90,14 @@ export default function PuzzleGame() {
                         )}
                     </div>
 
-                    <h2 className="result-title">
+                    <h2 className="result-title" data-testid="success-message">
                         {isSuccess ? '🎉 Congratulations!' : '😔 Not Quite Right'}
                     </h2>
 
                     {isSuccess && (
                         <div className="result-score">
                             <div className="score-circle-large">
-                                <span className="score-value-large">{score}%</span>
+                                <span className="score-value-large" data-testid="score-display">{score}%</span>
                             </div>
                         </div>
                     )}
@@ -216,7 +216,7 @@ export default function PuzzleGame() {
                     <p className="puzzle-description">{puzzle.description}</p>
                     <div className="puzzle-meta">
 
-                        <span className="attempt-badge">Attempt #{attemptCount + 1}</span>
+                        <span className="attempt-badge" data-testid="attempt-number">Attempt #{attemptCount + 1}</span>
                     </div>
                 </div>
 
