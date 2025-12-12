@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react';
 interface WordlePuzzleProps {
     targetWord: string;
     onComplete: (isCorrect: boolean) => void;
+    topicHint?: string;
 }
 
 type LetterStatus = 'correct' | 'present' | 'absent' | 'empty';
 
-export default function WordlePuzzle({ targetWord, onComplete }: WordlePuzzleProps) {
+export default function WordlePuzzle({ targetWord, onComplete, topicHint }: WordlePuzzleProps) {
     const [guesses, setGuesses] = useState<string[]>([]);
     const [currentGuess, setCurrentGuess] = useState('');
     const [gameStatus, setGameStatus] = useState<'playing' | 'won' | 'lost'>('playing');
@@ -137,6 +138,22 @@ export default function WordlePuzzle({ targetWord, onComplete }: WordlePuzzlePro
 
     return (
         <div className="wordle-puzzle" style={{ maxWidth: '350px', margin: '0 auto' }}>
+            {/* Topic Hint */}
+            <div style={{
+                backgroundColor: '#1e293b',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                marginBottom: '16px',
+                textAlign: 'center',
+                border: '1px solid #334155'
+            }}>
+                <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.9rem' }}>
+                    <strong style={{ color: '#10b981' }}>💡 Hint:</strong> {topicHint || 'Guess a 5-letter engineering term'}
+                </p>
+                <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.75rem' }}>
+                    Think about common engineering components, devices, or terms
+                </p>
+            </div>
             <div className="wordle-grid">
                 {guesses.map((guess, i) => renderRow(guess, i, false))}
                 {gameStatus === 'playing' && guesses.length < MAX_GUESSES && (
@@ -202,15 +219,17 @@ export default function WordlePuzzle({ targetWord, onComplete }: WordlePuzzlePro
                             <button
                                 onClick={submitGuess}
                                 style={{
-                                    padding: '10px',
-                                    backgroundColor: '#475569',
+                                    padding: '10px 12px',
+                                    backgroundColor: '#10b981',
                                     color: 'white',
                                     border: 'none',
                                     borderRadius: '4px',
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.75rem'
                                 }}
                             >
-                                ↵
+                                ENTER
                             </button>
                         )}
                     </div>

@@ -188,6 +188,7 @@ export default function PuzzleGame() {
                     <WordlePuzzle
                         targetWord={puzzle.targetWord}
                         onComplete={handlePuzzleComplete}
+                        topicHint={puzzle.hints?.[0]}
                     />
                 ) : null;
 
