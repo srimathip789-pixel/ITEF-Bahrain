@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { PuzzleService } from '../services/PuzzleService';
+import { addWinner } from '../services/firebaseService';
 import type { Puzzle } from '../types/PuzzleTypes';
 import { PuzzleType } from '../types/PuzzleTypes';
 import ConnectDotsPuzzle from '../components/puzzles/ConnectDotsPuzzle';
@@ -45,15 +46,16 @@ export default function PuzzleGame() {
         );
     }
 
-    const handlePuzzleComplete = (isCorrect: boolean, quizScore?: number) => {
+    const handlePuzzleComplete = async (isCorrect: boolean, quizScore?: number) => {
         const timeSpent = Math.floor((Date.now() - startTime) / 1000);
         const finalScore = quizScore !== undefined ? quizScore : (isCorrect ? 100 : 0);
+        const currentAttempt = PuzzleService.getAttemptCount(puzzle.id) + 1;
 
         setGameComplete(true);
         setIsSuccess(isCorrect);
         setScore(finalScore);
 
-        // Record the attempt
+        // Record the attempt locally
         PuzzleService.recordAttempt(
             puzzle.id,
             isCorrect,
@@ -61,6 +63,26 @@ export default function PuzzleGame() {
             timeSpent,
             showHints
         );
+
+        // Save winner to Firebase if first attempt success without hints
+        if (isCorrect && currentAttempt === 1 && !showHints) {
+            try {
+                const userDetails = localStorage.getItem('itef_user_details');
+                if (userDetails) {
+                    const user = JSON.parse(userDetails);
+                    await addWinner({
+                        name: user.name || 'Anonymous',
+                        email: user.email || 'unknown@email.com',
+                        puzzleId: puzzle.id,
+                        completedAt: new Date(),
+                        score: finalScore
+                    });
+                    console.log('Winner saved to Firebase!');
+                }
+            } catch (error) {
+                console.error('Error saving winner to Firebase:', error);
+            }
+        }
 
         // Update attempt count
         setAttemptCount(prev => prev + 1);
