@@ -39,9 +39,19 @@ export default function WinnersList({ puzzleId, limit }: WinnersListProps) {
         return `${minutes}m ${remainingSeconds}s`;
     };
 
+    // Sort winners by score (highest first), then by timestamp (earliest first)
+    const sortedWinners = [...winners].sort((a, b) => {
+        // First sort by score (highest first)
+        if ((b.score || 0) !== (a.score || 0)) {
+            return (b.score || 0) - (a.score || 0);
+        }
+        // Then by timestamp (earliest first)
+        return (a.timestamp || 0) - (b.timestamp || 0);
+    });
+
     const filteredWinners = filter === 'all'
-        ? winners
-        : winners.filter(w => w?.puzzleId === filter);
+        ? sortedWinners
+        : sortedWinners.filter(w => w?.puzzleId === filter);
 
     const displayedWinners = limit ? filteredWinners.slice(0, limit) : filteredWinners;
 
@@ -61,7 +71,7 @@ export default function WinnersList({ puzzleId, limit }: WinnersListProps) {
                 <img src="/itef-logo.png" alt="ITEF Bahrain" style={{ maxWidth: '200px', marginBottom: '16px' }} />
                 <Trophy size={28} className="header-icon" />
                 <h2>🏆 Winners List</h2>
-                <p className="subtitle">First-time solvers who got it right!</p>
+                <p className="subtitle">First-time solvers who scored 90% or higher!</p>
             </div>
 
             {!puzzleId && (

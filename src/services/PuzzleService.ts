@@ -137,8 +137,9 @@ export class PuzzleService {
             progress.completedPuzzles.push(puzzleId);
         }
 
-        // Add to winners list ONLY if first attempt and correct and no hints used
-        if (isCorrect && attempt.attemptNumber === 1 && !usedHints) {
+        // Add to winners list ONLY if first attempt and correct and no hints used AND score >= 90%
+        const scoreThreshold = 90;
+        if (isCorrect && attempt.attemptNumber === 1 && !usedHints && (score === undefined || score >= scoreThreshold)) {
             if (!progress.wonPuzzles.includes(puzzleId)) {
                 progress.wonPuzzles.push(puzzleId);
                 this.addWinner(puzzleId, currentUser.id, currentUser.name, score, timeSpent);

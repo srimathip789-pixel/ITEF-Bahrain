@@ -64,8 +64,8 @@ export default function PuzzleGame() {
             showHints
         );
 
-        // Save winner to Firebase if first attempt success without hints
-        if (isCorrect && currentAttempt === 1 && !showHints) {
+        // Save winner to Firebase if first attempt success without hints AND score >= 90%
+        if (isCorrect && currentAttempt === 1 && !showHints && finalScore >= 90) {
             try {
                 const userDetails = localStorage.getItem('itef_user_details');
                 if (userDetails) {
@@ -125,19 +125,21 @@ export default function PuzzleGame() {
                     )}
 
                     <p className="result-message">
-                        {isSuccess && attemptCount === 1 ? (
+                        {isSuccess && attemptCount === 1 && score >= 90 ? (
                             <>
                                 <Trophy size={20} className="inline-icon" />
-                                Amazing! You solved it on your first try and made it to the Winners List!
+                                Amazing! You scored {score}% on your first try and made it to the Winners List!
                             </>
+                        ) : isSuccess && attemptCount === 1 && score < 90 ? (
+                            `Great job! You scored ${score}% on your first try. Score 90% or higher to make the Winners List!`
                         ) : isSuccess ? (
-                            'Great job! You solved the puzzle, but it wasn\'t your first attempt.'
+                            `Great job! You scored ${score}%, but it wasn't your first attempt.`
                         ) : (
                             `Don't worry! You can try again. ${canSeeHints ? 'Hints are now available to help you!' : ''}`
                         )}
                     </p>
 
-                    {isSuccess && attemptCount === 1 && (
+                    {isSuccess && attemptCount === 1 && score >= 90 && (
                         <div className="winner-callout">
                             <Trophy className="trophy-icon" />
                             <span>You're now on the Winners List!</span>
