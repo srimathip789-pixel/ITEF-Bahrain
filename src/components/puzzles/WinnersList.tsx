@@ -58,6 +58,7 @@ export default function WinnersList({ puzzleId, limit }: WinnersListProps) {
     return (
         <div className="winners-list-container">
             <div className="winners-header">
+                <img src="/itef-logo.png" alt="ITEF Bahrain" style={{ maxWidth: '200px', marginBottom: '16px' }} />
                 <Trophy size={28} className="header-icon" />
                 <h2>🏆 Winners List</h2>
                 <p className="subtitle">First-time solvers who got it right!</p>
