@@ -8,7 +8,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
     const [layoutKey, setLayoutKey] = React.useState(0);
-    const [userName, setUserName] = React.useState<string>('DEBUG_INIT');
+    const [userName, setUserName] = React.useState<string>('');
 
     React.useEffect(() => {
         const loadUserName = () => {
@@ -16,20 +16,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             if (stored) {
                 try {
                     const user = JSON.parse(stored);
-                    console.log('Layout: Parsed user:', user);
                     if (user && user.name) {
-                        console.log('Layout: Setting user name:', user.name);
                         setUserName(user.name);
                     } else {
                         // Invalid structure
-                        console.log('Layout: Invalid user structure, resetting');
                         localStorage.removeItem(USER_DETAILS_KEY);
                         setUserName('');
                         setLayoutKey(prev => prev + 1); // Force remount to show registration
                     }
                 } catch {
                     // Corrupted data
-                    console.log('Layout: Corrupted data, resetting');
                     localStorage.removeItem(USER_DETAILS_KEY);
                     setUserName('');
                     setLayoutKey(prev => prev + 1); // Force remount
