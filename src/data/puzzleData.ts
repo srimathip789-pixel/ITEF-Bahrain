@@ -1038,18 +1038,6 @@ const ethicsQuestions: MCQQuestion[] = [
 
 export const allPuzzles: Puzzle[] = [
     {
-        id: 'engineering-wordle',
-        title: 'Engineering Wordle',
-        description: 'Guess the 5-letter engineering term in 6 tries.',
-        type: PuzzleType.ENGINEERING_WORDLE,
-        difficulty: PuzzleDifficulty.MEDIUM,
-        icon: '🔤',
-        targetWord: engineeringWords[getDailyWordIndex(engineeringWords.length)],
-        hints: [
-            'Think about common engineering components and devices'
-        ]
-    },
-    {
         id: 'electronics-fundamentals',
         title: 'Electronics Fundamentals',
         description: 'Test your knowledge of basic electronic components and concepts',
@@ -1096,6 +1084,18 @@ export const allPuzzles: Puzzle[] = [
         ],
         passingScore: 70,
         timeLimit: 600
+    },
+    {
+        id: 'engineering-wordle',
+        title: 'Engineering Wordle',
+        description: 'Guess the 5-letter engineering term in 6 tries.',
+        type: PuzzleType.ENGINEERING_WORDLE,
+        difficulty: PuzzleDifficulty.MEDIUM,
+        icon: '🔤',
+        targetWord: engineeringWords[getDailyWordIndex(engineeringWords.length)],
+        hints: [
+            'Think about common engineering components and devices'
+        ]
     },
     {
         id: 'mechanical-engineering',
