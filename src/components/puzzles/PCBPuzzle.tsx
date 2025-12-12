@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { PinPair, GridCoordinate } from '../../types/PuzzleTypes';
 
 interface PCBPuzzleProps {
@@ -8,16 +8,10 @@ interface PCBPuzzleProps {
 }
 
 export default function PCBPuzzle({ gridSize, pins, onComplete }: PCBPuzzleProps) {
-    const [grid, setGrid] = useState<(string | null)[][]>([]);
     const [activePath, setActivePath] = useState<{ color: string, path: GridCoordinate[] } | null>(null);
     const [completedPaths, setCompletedPaths] = useState<{ [color: string]: GridCoordinate[] }>({});
     const [isDragging, setIsDragging] = useState(false);
 
-    // Initialize grid
-    useEffect(() => {
-        const newGrid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
-        setGrid(newGrid);
-    }, [gridSize]);
 
     const getPinAt = (row: number, col: number) => {
         return pins.find(p =>
