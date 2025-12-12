@@ -1,0 +1,63 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - heading "Event Registration" [level=2] [ref=e8]
+      - paragraph [ref=e9]: Please enter your details to participate
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Full Name
+        - textbox "Full Name" [ref=e13]:
+          - /placeholder: Enter your full name
+      - generic [ref=e14]:
+        - generic [ref=e15]: Email Address
+        - textbox "Email Address" [ref=e16]:
+          - /placeholder: Enter your email
+      - generic [ref=e17]:
+        - generic [ref=e18]: Mobile Number
+        - textbox "Mobile Number" [ref=e19]:
+          - /placeholder: Enter your mobile number
+      - button "Start Playing" [ref=e20] [cursor=pointer]
+  - banner [ref=e21]:
+    - img "ITEF Bahrain" [ref=e22]
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - link "Back to Puzzles" [ref=e26] [cursor=pointer]:
+          - /url: /puzzles
+          - img [ref=e27]
+          - text: Back to Puzzles
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - generic [ref=e31]: 🔌
+            - heading "Digital Electronics" [level=1] [ref=e32]
+          - paragraph [ref=e33]: Master logic gates, Boolean algebra, and digital circuits
+          - generic [ref=e35]: "Attempt #1"
+        - button "Share" [ref=e37] [cursor=pointer]:
+          - img [ref=e38]
+          - generic [ref=e44]: Share
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]: Question 1 of 10
+          - generic [ref=e51]: "Answered: 0 / 10"
+        - generic [ref=e52]:
+          - heading "What is the output of an AND gate when both inputs are 1?" [level=3] [ref=e53]
+          - generic [ref=e54]:
+            - button "A 0" [ref=e55] [cursor=pointer]:
+              - generic [ref=e56]: A
+              - generic [ref=e57]: "0"
+            - button "B 1" [ref=e58] [cursor=pointer]:
+              - generic [ref=e59]: B
+              - generic [ref=e60]: "1"
+            - button "C Undefined" [ref=e61] [cursor=pointer]:
+              - generic [ref=e62]: C
+              - generic [ref=e63]: Undefined
+            - button "D Either 0 or 1" [ref=e64] [cursor=pointer]:
+              - generic [ref=e65]: D
+              - generic [ref=e66]: Either 0 or 1
+        - generic [ref=e67]:
+          - button "← Previous" [disabled] [ref=e68]
+          - button "Next →" [disabled] [ref=e69]
+```
