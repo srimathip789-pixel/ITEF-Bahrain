@@ -21,7 +21,19 @@ export default function UserRegistration() {
 
     useEffect(() => {
         const storedDetails = localStorage.getItem(USER_DETAILS_KEY);
-        if (!storedDetails) {
+        let isValid = false;
+        if (storedDetails) {
+            try {
+                const parsed = JSON.parse(storedDetails);
+                if (parsed && parsed.name && parsed.email) {
+                    isValid = true;
+                }
+            } catch (e) {
+                // Invalid JSON
+            }
+        }
+
+        if (!isValid) {
             setIsOpen(true);
         }
     }, []);

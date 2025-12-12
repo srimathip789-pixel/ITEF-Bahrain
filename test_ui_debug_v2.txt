@@ -1,0 +1,64 @@
+
+Running 1 test using 1 worker
+
+[1A[2K[1/1] [chromium] › tests\post_quiz_ui.spec.ts:5:5 › Post-Quiz UI Persistence › should maintain login state and attendees list after completing a puzzle
+[1A[2K[chromium] › tests\post_quiz_ui.spec.ts:5:5 › Post-Quiz UI Persistence › should maintain login state and attendees list after completing a puzzle
+BROWSER LOG: [vite] connecting...
+
+[1A[2KBROWSER LOG: [vite] connected.
+
+[1A[2KBROWSER LOG: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+[1A[2KBROWSER LOG: Layout: Loading user details from storage: {"name":"Test User","email":"test@example.com","mobile":"12345678"}
+
+[1A[2KBROWSER LOG: Layout: Loading user details from storage: {"name":"Test User","email":"test@example.com","mobile":"12345678"}
+
+[1A[2KBROWSER LOG: [2025-12-12T20:57:10.615Z]  @firebase/firestore: Firestore (12.6.0): WebChannelConnection RPC 'Listen' stream 0x851e681f transport errored. Name: undefined Message: undefined
+
+[1A[2KBROWSER LOG: [2025-12-12T20:57:10.616Z]  @firebase/firestore: Firestore (12.6.0): Could not reach Cloud Firestore backend. Connection failed 1 times. Most recent error: FirebaseError: [code=unavailable]: The operation could not be completed
+This typically indicates that your device does not have a healthy Internet connection at the moment. The client will operate in offline mode until it is able to successfully connect to the backend.
+
+[1A[2KBROWSER LOG: [vite] connecting...
+
+[1A[2KBROWSER LOG: [vite] connected.
+
+[1A[2KBROWSER LOG: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+[1A[2KBROWSER LOG: Layout: Loading user details from storage: null
+
+[1A[2KBROWSER LOG: Layout: Loading user details from storage: null
+
+[1A[2KBROWSER LOG: Registration: Saving to localStorage: {name: Test User Persistence, email: persistence_1765573030753@test.com, mobile: 12345678}
+
+[1A[2K  1) [chromium] › tests\post_quiz_ui.spec.ts:5:5 › Post-Quiz UI Persistence › should maintain login state and attendees list after completing a puzzle 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('header')
+    Expected substring: [32m"👤 Test User Persistence"[39m
+    Received string:    [31m""[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for locator('header')[22m
+    [2m    9 × locator resolved to <header class="itef-header">…</header>[22m
+    [2m      - unexpected value ""[22m
+
+
+      21 |
+      22 |         // 3. Verify Login State (Header)
+    > 23 |         await expect(page.locator('header')).toContainText('👤 Test User Persistence');
+         |                                              ^
+      24 |         await expect(page.locator('button', { hasText: 'Logout' })).toBeVisible();
+      25 |
+      26 |         // 4. Navigate to a Puzzle (e.g., Electronics Fundamentals)
+        at C:\Users\Sri Mathi\OneDrive\Desktop\RESUME\itef-quiz\tests\post_quiz_ui.spec.ts:23:46
+
+    Error Context: test-results\post_quiz_ui-Post-Quiz-UI--ff5dc-t-after-completing-a-puzzle-chromium\error-context.md
+
+
+[1A[2K  1 failed
+    [chromium] › tests\post_quiz_ui.spec.ts:5:5 › Post-Quiz UI Persistence › should maintain login state and attendees list after completing a puzzle 
+
+[36m  Serving HTML report at http://localhost:51051. Press Ctrl+C to quit.[39m
