@@ -59,12 +59,14 @@ export default function UserRegistration() {
         // Close modal
         setIsOpen(false);
 
-        // Save to Firebase for attendees tracking (in background, don't wait)
-        registerAttendee(details.name, details.email, details.mobile).catch((error) => {
+        // Save to Firebase for attendees tracking - wait for completion
+        try {
+            await registerAttendee(details.name, details.email, details.mobile);
+        } catch (error) {
             console.error('Error saving attendee to Firebase:', error);
-        });
+        }
 
-        // Reload page immediately to show puzzle hub
+        // Reload page to show puzzle hub
         window.location.reload();
     };
 
