@@ -176,7 +176,7 @@
     color: var(--success);
 }
 
-. status-icon.in-progress {
+.status-icon.in-progress {
     color: var(--warning);
 }
 
