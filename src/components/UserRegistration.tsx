@@ -66,6 +66,8 @@ export default function UserRegistration() {
         setIsOpen(false);
         // Dispatch event to notify other components
         window.dispatchEvent(new Event('itef-user-updated'));
+        // Reload page to ensure proper state update
+        window.location.reload();
     };
 
     if (!isOpen) return null;

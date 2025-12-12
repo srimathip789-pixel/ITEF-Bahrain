@@ -76,7 +76,6 @@ export default function PuzzleGame() {
                     user.name,
                     user.email
                 );
-                console.log('Attempt tracked in Firebase!');
             }
         } catch (error) {
             console.error('Error tracking attempt to Firebase:', error);
@@ -95,7 +94,6 @@ export default function PuzzleGame() {
                         completedAt: new Date(),
                         score: finalScore
                     });
-                    console.log('Winner saved to Firebase!');
                 }
             } catch (error) {
                 console.error('Error saving winner to Firebase:', error);

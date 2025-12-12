@@ -9,7 +9,6 @@ interface PuzzleCardProps {
 }
 
 export default function PuzzleCard({ puzzle }: PuzzleCardProps) {
-    console.log('Rendering PuzzleCard:', puzzle.id);
     const status = PuzzleService.getPuzzleStatus(puzzle.id);
     const attemptCount = PuzzleService.getAttemptCount(puzzle.id);
 

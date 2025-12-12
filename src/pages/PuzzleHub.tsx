@@ -20,10 +20,6 @@ export default function PuzzleHub() {
         ? puzzles
         : puzzles.filter(p => p.difficulty === filterDifficulty);
 
-    console.log('PuzzleHub Puzzles:', puzzles);
-    console.log('PuzzleHub Filtered:', filteredPuzzles);
-    console.log('PuzzleHub Filter:', filterDifficulty);
-
     return (
         <div className="puzzle-hub-container">
             {/* Hero Section */}

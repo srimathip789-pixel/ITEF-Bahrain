@@ -61,7 +61,6 @@ export async function registerAttendee(name: string, email: string, mobile: stri
             attemptCount: 0
         }, { merge: true }); // merge: true prevents overwriting if user already exists
 
-        console.log('Attendee registered in Firebase!');
         return true;
     } catch (error) {
         console.error('Error registering attendee:', error);
