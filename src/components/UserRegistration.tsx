@@ -53,20 +53,18 @@ export default function UserRegistration() {
             return;
         }
 
-        // Save to localStorage
+        // Save to localStorage first (this is synchronous and reliable)
         localStorage.setItem(USER_DETAILS_KEY, JSON.stringify(details));
 
-        // Save to Firebase for attendees tracking
-        try {
-            await registerAttendee(details.name, details.email, details.mobile);
-        } catch (error) {
-            console.error('Error saving attendee to Firebase:', error);
-        }
-
+        // Close modal
         setIsOpen(false);
-        // Dispatch event to notify other components
-        window.dispatchEvent(new Event('itef-user-updated'));
-        // Reload page to ensure proper state update
+
+        // Save to Firebase for attendees tracking (in background, don't wait)
+        registerAttendee(details.name, details.email, details.mobile).catch((error) => {
+            console.error('Error saving attendee to Firebase:', error);
+        });
+
+        // Reload page immediately to show puzzle hub
         window.location.reload();
     };
 
