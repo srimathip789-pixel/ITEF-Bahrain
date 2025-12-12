@@ -23,10 +23,29 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                 puzzleId ? getWinners(puzzleId) : getAllWinners(),
                 puzzleId ? getAllAttendees(puzzleId) : getAllAttendees()
             ]);
-            setWinners(winnersData || []);
+
+            // Filter winners: only show 90%+ scores and deduplicate
+            const uniqueWinners = new Map<string, Winner>();
+            (winnersData || []).forEach(winner => {
+                const key = `${winner.email}_${winner.puzzleId}`;
+                // Only add if score >= 90% and not already added (or if higher score)
+                if (winner.score >= 90) {
+                    if (!uniqueWinners.has(key) || (uniqueWinners.get(key)?.score || 0) < winner.score) {
+                        uniqueWinners.set(key, winner);
+                    }
+                }
+            });
+
+            // Sort by score (highest first)
+            const sortedWinners = Array.from(uniqueWinners.values())
+                .sort((a, b) => b.score - a.score);
+
+            setWinners(sortedWinners);
             setAttendees(attendeesData || []);
         } catch (error) {
             console.error('Error loading leaderboard data:', error);
+            setWinners([]);
+            setAttendees([]);
         }
         setLoading(false);
     };
@@ -86,7 +105,7 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                     {activeTab === 'winners' && (
                         <div className="winners-list" data-testid="winners-list">
                             <h3 style={{ color: '#94a3b8', marginBottom: '15px' }}>
-                                First-Time Success Winners
+                                First-Time Winners (90%+ Score)
                             </h3>
                             {winners.length === 0 ? (
                                 <p style={{ color: '#64748b', textAlign: 'center', padding: '20px' }} data-testid="no-winners-message">
@@ -96,7 +115,7 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                     {winners.map((winner, index) => (
                                         <div
-                                            key={index}
+                                            key={`${winner.email}_${winner.puzzleId}`}
                                             style={{
                                                 display: 'flex',
                                                 justifyContent: 'space-between',
