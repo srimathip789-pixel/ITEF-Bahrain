@@ -47,6 +47,28 @@ export async function addWinner(winner: Winner): Promise<boolean> {
     }
 }
 
+// Register an attendee when they sign up
+export async function registerAttendee(name: string, email: string, mobile: string): Promise<boolean> {
+    try {
+        const attendeesRef = collection(db, 'registrations');
+        const attendeeDoc = doc(attendeesRef, email);
+
+        await setDoc(attendeeDoc, {
+            name,
+            email,
+            mobile,
+            registeredAt: serverTimestamp(),
+            attemptCount: 0
+        }, { merge: true }); // merge: true prevents overwriting if user already exists
+
+        console.log('Attendee registered in Firebase!');
+        return true;
+    } catch (error) {
+        console.error('Error registering attendee:', error);
+        return false;
+    }
+}
+
 // Get winners for a specific puzzle
 export async function getWinners(puzzleId: string, limitCount: number = 50): Promise<Winner[]> {
     try {

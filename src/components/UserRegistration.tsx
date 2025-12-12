@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './UserRegistration.css';
+import { registerAttendee } from '../services/firebaseService';
 
 interface UserDetails {
     name: string;
@@ -33,7 +34,7 @@ export default function UserRegistration() {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!details.name || !details.email || !details.mobile) {
@@ -52,7 +53,16 @@ export default function UserRegistration() {
             return;
         }
 
+        // Save to localStorage
         localStorage.setItem(USER_DETAILS_KEY, JSON.stringify(details));
+
+        // Save to Firebase for attendees tracking
+        try {
+            await registerAttendee(details.name, details.email, details.mobile);
+        } catch (error) {
+            console.error('Error saving attendee to Firebase:', error);
+        }
+
         setIsOpen(false);
         // Dispatch event to notify other components
         window.dispatchEvent(new Event('itef-user-updated'));
