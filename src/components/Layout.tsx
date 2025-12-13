@@ -71,7 +71,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         backgroundColor: 'rgba(255,255,255,0.9)',
                         padding: '8px 12px',
                         borderRadius: '6px',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        zIndex: 1000
                     }}>
                         <span style={{ color: '#333', fontWeight: '500', fontSize: '0.9rem' }}>
                             👤 {userName}
