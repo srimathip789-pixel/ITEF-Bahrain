@@ -1,6 +1,7 @@
 import React from 'react';
 import './HeaderStyles.css';
 import UserRegistration, { USER_DETAILS_KEY } from './UserRegistration';
+import { useLocation } from 'react-router-dom';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -9,6 +10,13 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
     const [layoutKey, setLayoutKey] = React.useState(0);
     const [userName, setUserName] = React.useState<string>('');
+    const location = useLocation();
+
+    // Determine if we are in an active puzzle game
+    // Route pattern: /puzzles/:puzzleId (but not /puzzles or /puzzles/winners)
+    const isPuzzleGame = location.pathname.startsWith('/puzzles/') &&
+        location.pathname !== '/puzzles' &&
+        location.pathname !== '/puzzles/winners';
 
     React.useEffect(() => {
         const loadUserName = () => {
@@ -60,7 +68,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <UserRegistration />
             <header className="itef-header">
                 <img src="/itef-header.png" alt="ITEF Bahrain" className="header-image" />
-                {userName && (
+                {userName && !isPuzzleGame && (
                     <div className="user-info" style={{
                         position: 'absolute',
                         top: '10px',

@@ -1,6 +1,7 @@
 import type { Puzzle, PuzzleAttempt, WinnerEntry, UserProgress } from '../types/PuzzleTypes';
 import { PuzzleStatus } from '../types/PuzzleTypes';
 import { allPuzzles } from '../data/puzzleData';
+import { addWinner as fbAddWinner, trackAttempt as fbTrackAttempt } from './firebaseService';
 
 const STORAGE_KEY_PROGRESS = 'puzzleProgress';
 const STORAGE_KEY_WINNERS = 'puzzleWinners';
@@ -18,19 +19,23 @@ export class PuzzleService {
     }
 
     // Get current user info from registration
-    static getCurrentUser(): { id: string; name: string } {
+    static getCurrentUser(): { id: string; name: string; email: string } {
         try {
             const stored = localStorage.getItem('itef_user_details');
             if (stored) {
                 const details = JSON.parse(stored);
                 // Use email as ID since it's unique for this event
-                return { id: details.email || 'guest', name: details.name || 'Guest' };
+                return {
+                    id: details.email || 'guest',
+                    name: details.name || 'Guest',
+                    email: details.email || ''
+                };
             }
         } catch (e) {
             console.error('Error parsing user details:', e);
         }
         // Fallback (should be prevented by UserRegistration component)
-        return { id: 'guest', name: 'Guest User' };
+        return { id: 'guest', name: 'Guest User', email: '' };
     }
 
     // Set current user (Deprecated/Unused with new registration flow)
@@ -147,6 +152,17 @@ export class PuzzleService {
         }
 
         this.saveUserProgress(progress);
+
+        // Sync to Firebase (Fire and forget)
+        if (currentUser.email) {
+            fbTrackAttempt(
+                currentUser.id,
+                puzzleId,
+                isCorrect,
+                currentUser.name,
+                currentUser.email
+            ).catch(err => console.error("Failed to sync attempt to Firebase", err));
+        }
     }
 
     // Get all winners
@@ -188,6 +204,18 @@ export class PuzzleService {
 
         winners.push(winnerEntry);
         localStorage.setItem(STORAGE_KEY_WINNERS, JSON.stringify(winners));
+
+        // Sync to Firebase
+        const currentUser = this.getCurrentUser();
+        if (currentUser.email) {
+            fbAddWinner({
+                name: userName,
+                email: currentUser.email,
+                puzzleId,
+                completedAt: new Date(),
+                score: score || 0
+            }).catch(err => console.error("Failed to sync winner to Firebase", err));
+        }
     }
 
     // Check if user can see hints
