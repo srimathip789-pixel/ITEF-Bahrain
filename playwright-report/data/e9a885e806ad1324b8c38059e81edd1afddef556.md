@@ -1,0 +1,64 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - img "ITEF Bahrain" [ref=e6]
+    - generic [ref=e7]:
+      - generic [ref=e8]: 👤 Test Engineer
+      - button "Logout" [ref=e9] [cursor=pointer]
+  - main [ref=e10]:
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - link "Back to Puzzles" [ref=e13] [cursor=pointer]:
+          - /url: /puzzles
+          - img [ref=e14]
+          - text: Back to Puzzles
+        - heading "🏆 Complete Winners List" [level=1] [ref=e16]
+        - paragraph [ref=e17]: Engineers who solved puzzles correctly on their first try!
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - img "ITEF Bahrain" [ref=e20]
+          - img [ref=e21]
+          - heading "🏆 Winners List" [level=2] [ref=e27]
+          - paragraph [ref=e28]: First-time solvers who scored 90% or higher!
+        - combobox [ref=e30] [cursor=pointer]:
+          - option "All Puzzles" [selected]
+          - option "⚡ Electronics Fundamentals"
+          - option "💻 Programming & Logic"
+          - option "🔌 Digital Electronics"
+          - option "🔤 Engineering Wordle"
+          - option "⚙️ Mechanical Engineering"
+          - option "🔥 Thermodynamics"
+          - option "🔬 Materials Science"
+          - option "🔋 Circuit Analysis"
+          - option "📐 Engineering Mathematics"
+          - option "⚖️ Engineering Ethics & Safety"
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - generic [ref=e33]: 🥇
+            - generic [ref=e34]:
+              - generic [ref=e35]:
+                - img [ref=e36]
+                - text: Test Engineer
+              - generic [ref=e39]: Electronics Fundamentals
+              - generic [ref=e40]:
+                - generic [ref=e41]:
+                  - img [ref=e42]
+                  - text: 12/15/2025 03:01 PM
+                - generic [ref=e45]: "Score: 100%"
+                - generic [ref=e46]: ⏱ 0m 1s
+          - generic [ref=e47]:
+            - generic [ref=e48]: 🥈
+            - generic [ref=e49]:
+              - generic [ref=e50]:
+                - img [ref=e51]
+                - text: Test Engineer
+              - generic [ref=e54]: Unknown Puzzle
+              - generic [ref=e55]:
+                - generic [ref=e56]:
+                  - img [ref=e57]
+                  - text: 12/15/2025 03:01 PM
+                - generic [ref=e60]: "Score: 100%"
+                - text: "0"
+```

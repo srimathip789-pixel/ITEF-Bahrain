@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAllAttendees, type Attendee } from '../services/attendeeService';
 import { getWinners, getAllWinners, type Winner } from '../services/firebaseService';
+import { PuzzleService } from '../services/PuzzleService';
 
 interface LeaderboardProps {
     puzzleId?: string;
@@ -22,11 +23,33 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
         setLoadingWinners(true);
         const fetchWinners = async () => {
             try {
-                const data = puzzleId ? await getWinners(puzzleId) : await getAllWinners();
+                const fbWinners = puzzleId ? await getWinners(puzzleId) : await getAllWinners();
+                const localWinners = puzzleId ? PuzzleService.getWinnersForPuzzle(puzzleId) : PuzzleService.getAllWinners();
+
+                // Convert local winners to Firebase format and merge
+                const allWinners = [...(fbWinners || [])];
+
+                // Add local winners if not already present
+                localWinners.forEach(lw => {
+                    const isPresent = allWinners.some(fw =>
+                        fw.email === (PuzzleService.getCurrentUser().email) &&
+                        fw.puzzleId === lw.puzzleId
+                    );
+
+                    if (!isPresent) {
+                        allWinners.push({
+                            name: lw.userName,
+                            email: PuzzleService.getCurrentUser().email || 'local@user',
+                            puzzleId: lw.puzzleId,
+                            completedAt: new Date(lw.timestamp),
+                            score: lw.score || 0
+                        });
+                    }
+                });
 
                 // Filter winners: only show 90%+ scores and deduplicate
                 const uniqueWinners = new Map<string, Winner>();
-                (data || []).forEach(winner => {
+                allWinners.forEach(winner => {
                     const key = `${winner.email}_${winner.puzzleId}`;
                     // Only add if score >= 90% and not already added (or if higher score)
                     if (winner.score >= 90) {
@@ -137,9 +160,9 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                                             justifyContent: 'space-between',
                                             alignItems: 'center',
                                             padding: '15px',
-                                            backgroundColor: '#0f172a',
                                             borderRadius: '8px',
-                                            borderLeft: index < 3 ? '4px solid #fbbf24' : '4px solid #3b82f6'
+                                            borderLeft: index < 3 ? '4px solid #fbbf24' : '4px solid #3b82f6',
+                                            border: winner.puzzleId === 'global-overall' ? '2px solid #fbbf24' : 'none'
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -151,8 +174,20 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                                                 #{index + 1}
                                             </span>
                                             <div>
-                                                <div style={{ color: 'white', fontWeight: 'bold' }}>
+                                                <div style={{ color: 'white', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                     {winner.name}
+                                                    {winner.puzzleId === 'global-overall' && (
+                                                        <span style={{
+                                                            fontSize: '0.7rem',
+                                                            backgroundColor: '#fbbf24',
+                                                            color: 'black',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px',
+                                                            fontWeight: 'bold'
+                                                        }}>
+                                                            GLOBAL CHAMPION
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <div style={{ color: '#64748b', fontSize: '0.875rem' }}>
                                                     {winner.email}

@@ -164,6 +164,23 @@ export class PuzzleService {
                 score
             ).catch(err => console.error("Failed to sync attempt to Firebase", err));
         }
+
+        // Check for Global Winner (Average Score >= 90%)
+        const averageScore = this.getAverageScore();
+        if (averageScore >= 90) {
+            const winners = this.getAllWinners();
+            const isGlobalWinner = winners.some(w => w.puzzleId === 'global-overall' && w.userId === currentUser.id);
+
+            if (!isGlobalWinner) {
+                this.addWinner('global-overall', currentUser.id, currentUser.name, averageScore, 0);
+            } else {
+                // Optional: Update score if it improved? 
+                // For now, valid to just leave the first entry or update it. 
+                // Let's checking if we should update the existing entry could be complex with the current array structure,
+                // but for a winner list, usually the first entry is fine, or we can just re-add/update.
+                // Given the requirement "add if they get score above 90%", one entry is sufficient.
+            }
+        }
     }
 
     // Get all winners
@@ -291,18 +308,42 @@ export class PuzzleService {
         totalCompleted: number;
         totalWon: number;
         successRate: number;
+        averageScore: number;
     } {
         const progress = this.getUserProgress();
         const totalAttempts = Object.values(progress.attempts).reduce((sum, attempts) => sum + attempts.length, 0);
         const totalCompleted = progress.completedPuzzles.length;
         const totalWon = progress.wonPuzzles.length;
-        const successRate = totalAttempts > 0 ? (totalWon / allPuzzles.length) * 100 : 0;
+        const totalAverage = this.getAverageScore();
+        // Success rate based on ATTMEPTED puzzles, not total puzzles in system
+        const activePuzzlesCount = Object.keys(progress.attempts).length;
+        const successRate = activePuzzlesCount > 0 ? (totalWon / activePuzzlesCount) * 100 : 0;
 
         return {
             totalAttempts,
             totalCompleted,
             totalWon,
-            successRate: Math.round(successRate)
+            successRate: Math.round(successRate),
+            averageScore: totalAverage
         };
+    }
+
+    // Calculate average score across all attempted puzzles
+    static getAverageScore(): number {
+        const progress = this.getUserProgress();
+        const attemptedPuzzleIds = Object.keys(progress.attempts);
+
+        if (attemptedPuzzleIds.length === 0) return 0;
+
+        let totalMaxScore = 0;
+
+        attemptedPuzzleIds.forEach(pid => {
+            const attempts = progress.attempts[pid];
+            // Get the highest score achieved for this puzzle
+            const maxScore = Math.max(...attempts.map(a => a.score || 0));
+            totalMaxScore += maxScore;
+        });
+
+        return Math.round(totalMaxScore / attemptedPuzzleIds.length);
     }
 }

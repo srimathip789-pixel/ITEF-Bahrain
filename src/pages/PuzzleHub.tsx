@@ -52,6 +52,11 @@ export default function PuzzleHub() {
                         <div className="stat-value">{stats.totalWon}</div>
                         <div className="stat-label">First-Try Wins</div>
                     </div>
+                    <div className="stat-card">
+                        <Target className="stat-icon" />
+                        <div className="stat-value">{stats.averageScore}%</div>
+                        <div className="stat-label">Avg. Score</div>
+                    </div>
                 </div>
             </div>
 
