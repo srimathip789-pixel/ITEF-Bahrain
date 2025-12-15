@@ -12,7 +12,6 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
     const [attendees, setAttendees] = useState<Attendee[]>([]);
     const [loadingWinners, setLoadingWinners] = useState(true);
     const [loadingAttendees, setLoadingAttendees] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         loadData();
