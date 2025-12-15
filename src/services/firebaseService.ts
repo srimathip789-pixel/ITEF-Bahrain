@@ -10,7 +10,8 @@ import {
     orderBy,
     limit,
     getDocs,
-    serverTimestamp
+    serverTimestamp,
+    deleteDoc
 } from 'firebase/firestore';
 
 export interface Winner {
@@ -212,6 +213,28 @@ export async function isEligibleForWinnerList(userId: string, puzzleId: string):
         return data.firstAttemptSuccess === true && data.attemptCount === 1;
     } catch (error) {
         console.error('Error checking eligibility:', error);
+        return false;
+    }
+}
+
+// Clear all data (Admin/Debub use only)
+export async function clearAllData(): Promise<boolean> {
+    try {
+        const collections = ['winners', 'registrations', 'attempts', 'users']; // Add any other collections
+
+        for (const colName of collections) {
+            const colRef = collection(db, colName);
+            const snapshot = await getDocs(colRef);
+            console.log(`Deleting ${snapshot.size} documents from ${colName}...`);
+
+            const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+            await Promise.all(deletePromises);
+        }
+
+        console.log('All data cleared successfully.');
+        return true;
+    } catch (error) {
+        console.error('Error clearing data:', error);
         return false;
     }
 }

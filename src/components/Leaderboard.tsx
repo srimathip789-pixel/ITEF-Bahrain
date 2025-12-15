@@ -227,58 +227,60 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                             </p>
                         ) : (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                {winners.map((winner, index) => (
-                                    <div
-                                        key={`${winner.email}_${winner.puzzleId}`}
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            padding: '15px',
-                                            backgroundColor: '#0f172a',
-                                            borderRadius: '8px',
-                                            borderLeft: index < 3 ? '4px solid #fbbf24' : '4px solid #3b82f6'
-                                        }}
-                                    >
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                            <span style={{
-                                                fontSize: '1.5rem',
-                                                fontWeight: 'bold',
-                                                color: index === 0 ? '#fbbf24' : index === 1 ? '#94a3b8' : index === 2 ? '#cd7f32' : '#64748b'
-                                            }}>
-                                                #{index + 1}
-                                            </span>
-                                            <div>
-                                                <div style={{ color: 'white', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                    {winner.name}
-                                                    {winner.puzzleId === 'global-overall' && (
-                                                        <span style={{
-                                                            fontSize: '0.7rem',
-                                                            backgroundColor: '#fbbf24',
-                                                            color: '#000',
-                                                            padding: '2px 6px',
-                                                            borderRadius: '4px',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            GLOBAL CHAMPION
-                                                        </span>
-                                                    )}
+                                {winners.map((winner, index) => {
+                                    return (
+                                        <div
+                                            key={`${winner.email}_${winner.puzzleId}`}
+                                            style={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                padding: '15px',
+                                                backgroundColor: '#0f172a',
+                                                borderRadius: '8px',
+                                                borderLeft: index < 3 ? '4px solid #fbbf24' : '4px solid #3b82f6'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                                <span style={{
+                                                    fontSize: '1.5rem',
+                                                    fontWeight: 'bold',
+                                                    color: index === 0 ? '#fbbf24' : index === 1 ? '#94a3b8' : index === 2 ? '#cd7f32' : '#64748b'
+                                                }}>
+                                                    #{index + 1}
+                                                </span>
+                                                <div>
+                                                    <div style={{ color: 'white', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                        {winner.name}
+                                                        {winner.puzzleId === 'global-overall' && (
+                                                            <span style={{
+                                                                fontSize: '0.7rem',
+                                                                backgroundColor: '#fbbf24',
+                                                                color: '#000',
+                                                                padding: '2px 6px',
+                                                                borderRadius: '4px',
+                                                                fontWeight: 'bold'
+                                                            }}>
+                                                                GLOBAL CHAMPION
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div style={{ color: '#64748b', fontSize: '0.875rem' }}>
+                                                        {winner.email}
+                                                    </div>
                                                 </div>
-                                                <div style={{ color: '#64748b', fontSize: '0.875rem' }}>
-                                                    {winner.email}
+                                            </div>
+                                            <div style={{ textAlign: 'right' }}>
+                                                <div style={{ color: '#10b981', fontWeight: 'bold' }}>
+                                                    {winner.score}%
+                                                </div>
+                                                <div style={{ color: '#64748b', fontSize: '0.75rem' }}>
+                                                    {new Date(winner.completedAt).toLocaleDateString()}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div style={{ textAlign: 'right' }}>
-                                            <div style={{ color: '#10b981', fontWeight: 'bold' }}>
-                                                {winner.score}%
-                                            </div>
-                                            <div style={{ color: '#64748b', fontSize: '0.75rem' }}>
-                                                {new Date(winner.completedAt).toLocaleDateString()}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
