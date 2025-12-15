@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { DotCoordinate } from '../../types/PuzzleTypes';
 
 interface ConnectDotsPuzzleProps {
@@ -16,9 +16,7 @@ export default function ConnectDotsPuzzle({ dots, onComplete, revealImage }: Con
     const CANVAS_HEIGHT = 350;
     const DOT_RADIUS = 6;
 
-    useEffect(() => {
-        drawCanvas();
-    }, [connectedDots, showReveal]);
+
 
     useEffect(() => {
         if (isComplete && revealImage) {
@@ -27,7 +25,7 @@ export default function ConnectDotsPuzzle({ dots, onComplete, revealImage }: Con
         }
     }, [isComplete, revealImage]);
 
-    const drawCanvas = () => {
+    const drawCanvas = useCallback(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -97,8 +95,13 @@ export default function ConnectDotsPuzzle({ dots, onComplete, revealImage }: Con
                 ctx.textBaseline = 'middle';
                 ctx.fillText(dot.id.toString(), dot.x, dot.y);
             }
+
         });
-    };
+    }, [connectedDots, showReveal, dots, revealImage, isComplete]);
+
+    useEffect(() => {
+        drawCanvas();
+    }, [drawCanvas]);
 
     const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
         if (isComplete) return;

@@ -25,6 +25,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 try {
                     const user = JSON.parse(stored);
                     if (user && user.name) {
+                        // Check for auto-logout (24 hours)
+                        const now = Date.now();
+                        const twentyFourHours = 24 * 60 * 60 * 1000;
+
+                        if (user.loginTimestamp && (now - user.loginTimestamp > twentyFourHours)) {
+                            // Session expired
+                            localStorage.removeItem(USER_DETAILS_KEY);
+                            localStorage.removeItem('puzzleProgress');
+                            localStorage.removeItem('puzzleWinners');
+                            setUserName('');
+                            setLayoutKey(prev => prev + 1);
+                            return;
+                        }
+
                         setUserName(user.name);
                     } else {
                         // Invalid structure

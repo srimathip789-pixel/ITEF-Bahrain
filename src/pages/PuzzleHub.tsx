@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PuzzleService } from '../services/PuzzleService';
 import PuzzleCard from '../components/puzzles/PuzzleCard';
@@ -9,12 +9,7 @@ import { Brain, Trophy, Target, Zap } from 'lucide-react';
 export default function PuzzleHub() {
     const [puzzles] = useState(PuzzleService.getAllPuzzles());
     const [filterDifficulty, setFilterDifficulty] = useState<string>('all');
-    const [stats, setStats] = useState(PuzzleService.getUserStats());
-
-    useEffect(() => {
-        // Update stats whenever component mounts
-        setStats(PuzzleService.getUserStats());
-    }, []);
+    const [stats] = useState(() => PuzzleService.getUserStats());
 
     const filteredPuzzles = filterDifficulty === 'all'
         ? puzzles

@@ -27,7 +27,7 @@ export default function WinnersList({ puzzleId, limit }: WinnersListProps) {
         try {
             const date = new Date(timestamp);
             return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        } catch (e) {
+        } catch {
             return 'Invalid Date';
         }
     };

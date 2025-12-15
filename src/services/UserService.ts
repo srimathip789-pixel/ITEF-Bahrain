@@ -24,7 +24,8 @@ export const UserService = {
         const users = UserService.getUsers();
         const user = users.find(u => u.email === email && u.password === password);
         if (user) {
-            const { password, ...userWithoutPassword } = user;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { password: _password, ...userWithoutPassword } = user;
             localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPassword));
             return userWithoutPassword as User;
         }

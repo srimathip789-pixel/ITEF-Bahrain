@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './UserRegistration.css';
 import { registerAttendee } from '../services/firebaseService';
 
@@ -6,20 +6,13 @@ interface UserDetails {
     name: string;
     email: string;
     mobile: string;
+    loginTimestamp?: number;
 }
 
 export const USER_DETAILS_KEY = 'itef_user_details';
 
 export default function UserRegistration() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [details, setDetails] = useState<UserDetails>({
-        name: '',
-        email: '',
-        mobile: ''
-    });
-    const [error, setError] = useState('');
-
-    useEffect(() => {
+    const [isOpen, setIsOpen] = useState(() => {
         const storedDetails = localStorage.getItem(USER_DETAILS_KEY);
         let isValid = false;
         if (storedDetails) {
@@ -28,15 +21,18 @@ export default function UserRegistration() {
                 if (parsed && parsed.name && parsed.email) {
                     isValid = true;
                 }
-            } catch (e) {
+            } catch {
                 // Invalid JSON
             }
         }
-
-        if (!isValid) {
-            setIsOpen(true);
-        }
-    }, []);
+        return !isValid;
+    });
+    const [details, setDetails] = useState<UserDetails>({
+        name: '',
+        email: '',
+        mobile: ''
+    });
+    const [error, setError] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -66,7 +62,11 @@ export default function UserRegistration() {
         }
 
         // Save to localStorage first (this is synchronous and reliable)
-        localStorage.setItem(USER_DETAILS_KEY, JSON.stringify(details));
+        const userDetails = {
+            ...details,
+            loginTimestamp: Date.now()
+        };
+        localStorage.setItem(USER_DETAILS_KEY, JSON.stringify(userDetails));
 
         // Notify Layout to update header immediately
         window.dispatchEvent(new Event('itef-user-updated'));

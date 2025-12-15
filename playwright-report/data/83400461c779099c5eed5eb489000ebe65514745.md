@@ -1,0 +1,65 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - img "ITEF Bahrain" [ref=e6]
+  - main [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - link "Back to Puzzles" [ref=e10] [cursor=pointer]:
+          - /url: /puzzles
+          - img [ref=e11]
+          - text: Back to Puzzles
+        - generic [ref=e13]:
+          - generic [ref=e14]:
+            - generic [ref=e15]: ⚡
+            - heading "Electronics Fundamentals" [level=1] [ref=e16]
+          - paragraph [ref=e17]: Test your knowledge of basic electronic components and concepts
+          - generic [ref=e19]: "Attempt #2"
+        - button "Share" [ref=e21] [cursor=pointer]:
+          - img [ref=e22]
+          - generic [ref=e28]: Share
+      - generic [ref=e30]:
+        - img [ref=e32]
+        - generic:
+          - generic [ref=e35]: ❄️ Snowflake Congrats! You scored 100%
+          - generic:
+            - generic: ❄
+            - generic: ❄
+            - generic: ❄
+            - generic: ❄
+            - generic: ❄
+        - heading "🎉 Congratulations!" [level=2] [ref=e36]
+        - generic [ref=e39]: 100%
+        - paragraph [ref=e40]:
+          - img [ref=e41]
+          - text: Amazing! You scored 100% on your first try and made it to the Winners List! 🎉
+        - generic [ref=e47]:
+          - img [ref=e48]
+          - generic [ref=e54]: You're now on the Winners List!
+        - generic [ref=e55]:
+          - link "Back to Puzzles" [ref=e56] [cursor=pointer]:
+            - /url: /puzzles
+          - button "Share" [ref=e58] [cursor=pointer]:
+            - img [ref=e59]
+            - generic [ref=e65]: Share
+        - generic [ref=e67]:
+          - generic [ref=e68]:
+            - img "ITEF Bahrain" [ref=e69]
+            - img [ref=e70]
+            - heading "🏆 Winners List" [level=2] [ref=e76]
+            - paragraph [ref=e77]: First-time solvers who scored 90% or higher!
+          - generic [ref=e79]:
+            - generic [ref=e80]: 🥇
+            - generic [ref=e81]:
+              - generic [ref=e82]:
+                - img [ref=e83]
+                - text: Global Test User
+              - generic [ref=e86]:
+                - generic [ref=e87]:
+                  - img [ref=e88]
+                  - text: 12/15/2025 07:19 PM
+                - generic [ref=e91]: "Score: 100%"
+                - generic [ref=e92]: ⏱ 0m 1s
+```

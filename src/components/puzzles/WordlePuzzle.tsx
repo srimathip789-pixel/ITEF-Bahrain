@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface WordlePuzzleProps {
     targetWord: string;
@@ -18,26 +18,7 @@ export default function WordlePuzzle({ targetWord, onComplete, topicHint }: Word
     const WORD_LENGTH = 5;
     const TARGET = targetWord.toUpperCase();
 
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (gameStatus !== 'playing') return;
-
-            if (e.key === 'Enter') {
-                submitGuess();
-            } else if (e.key === 'Backspace') {
-                setCurrentGuess(prev => prev.slice(0, -1));
-            } else if (/^[a-zA-Z]$/.test(e.key)) {
-                if (currentGuess.length < WORD_LENGTH) {
-                    setCurrentGuess(prev => prev + e.key.toUpperCase());
-                }
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [currentGuess, gameStatus]);
-
-    const submitGuess = () => {
+    const submitGuess = useCallback(() => {
         if (currentGuess.length !== WORD_LENGTH) {
             // Shake animation
             setShakeRow(guesses.length);
@@ -55,11 +36,30 @@ export default function WordlePuzzle({ targetWord, onComplete, topicHint }: Word
         } else if (newGuesses.length >= MAX_GUESSES) {
             setGameStatus('lost');
             // Allow retry? For now, just fail.
-            // Actually, let's give them a "Try Again" button in the parent, 
+            // Actually, let's give them a "Try Again" button in the parent,
             // but here we just report false after a delay
             setTimeout(() => onComplete(false), 1500);
         }
-    };
+    }, [currentGuess, guesses, TARGET, onComplete, WORD_LENGTH, MAX_GUESSES]);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (gameStatus !== 'playing') return;
+
+            if (e.key === 'Enter') {
+                submitGuess();
+            } else if (e.key === 'Backspace') {
+                setCurrentGuess(prev => prev.slice(0, -1));
+            } else if (/^[a-zA-Z]$/.test(e.key)) {
+                if (currentGuess.length < WORD_LENGTH) {
+                    setCurrentGuess(prev => prev + e.key.toUpperCase());
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [currentGuess, gameStatus, submitGuess, WORD_LENGTH]);
 
     const getLetterStatus = (_letter: string, index: number, word: string): LetterStatus => {
         if (!word) return 'empty';
