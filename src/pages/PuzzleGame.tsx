@@ -46,6 +46,39 @@ export default function PuzzleGame() {
         );
     }
 
+    // Trigger confetti on high score
+    useEffect(() => {
+        if (gameComplete && isSuccess && score >= 90) {
+            import('canvas-confetti').then((confetti) => {
+                const duration = 3000;
+                const end = Date.now() + duration;
+
+                const frame = () => {
+                    confetti.default({
+                        particleCount: 2,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#fbbf24', '#ef4444', '#3b82f6', '#10b981']
+                    });
+                    confetti.default({
+                        particleCount: 2,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#fbbf24', '#ef4444', '#3b82f6', '#10b981']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                };
+
+                frame();
+            });
+        }
+    }, [gameComplete, isSuccess, score]);
+
     const handlePuzzleComplete = async (isCorrect: boolean, quizScore?: number) => {
         const timeSpent = Math.floor((Date.now() - startTime) / 1000);
         const finalScore = quizScore !== undefined ? quizScore : (isCorrect ? 100 : 0);
@@ -127,19 +160,19 @@ export default function PuzzleGame() {
                             <X size={64} className="failure-icon" />
                         )}
                     </div>
-                        {/* Snowflake congrats overlay for high scorers */}
-                        {isSuccess && score >= 90 && (
-                            <div className="snowflake-overlay" aria-hidden={false}>
-                                <div className="snowflake-message">❄️ Snowflake Congrats! You scored {score}%</div>
-                                <div className="snowflakes" aria-hidden>
-                                    <span className="snowflake">❄</span>
-                                    <span className="snowflake">❄</span>
-                                    <span className="snowflake">❄</span>
-                                    <span className="snowflake">❄</span>
-                                    <span className="snowflake">❄</span>
-                                </div>
+                    {/* Snowflake congrats overlay for high scorers */}
+                    {isSuccess && score >= 90 && (
+                        <div className="snowflake-overlay" aria-hidden={false}>
+                            <div className="snowflake-message">❄️ Snowflake Congrats! You scored {score}%</div>
+                            <div className="snowflakes" aria-hidden>
+                                <span className="snowflake">❄</span>
+                                <span className="snowflake">❄</span>
+                                <span className="snowflake">❄</span>
+                                <span className="snowflake">❄</span>
+                                <span className="snowflake">❄</span>
                             </div>
-                        )}
+                        </div>
+                    )}
 
                     <h2 className="result-title" data-testid="success-message">
                         {isSuccess ? '🎉 Congratulations!' : '😔 Not Quite Right'}
@@ -157,7 +190,7 @@ export default function PuzzleGame() {
                         {isSuccess && attemptCount === 1 && score >= 90 ? (
                             <>
                                 <Trophy size={20} className="inline-icon" />
-                                Amazing! You scored {score}% on your first try and made it to the Winners List!
+                                Amazing! You scored {score}% on your first try and made it to the Winners List! 🎉
                             </>
                         ) : isSuccess && attemptCount === 1 && score < 90 ? (
                             `Great job! You scored ${score}% on your first try. Score 90% or higher to make the Winners List!`
