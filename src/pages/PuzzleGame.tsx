@@ -127,6 +127,19 @@ export default function PuzzleGame() {
                             <X size={64} className="failure-icon" />
                         )}
                     </div>
+                        {/* Snowflake congrats overlay for high scorers */}
+                        {isSuccess && score >= 90 && (
+                            <div className="snowflake-overlay" aria-hidden={false}>
+                                <div className="snowflake-message">❄️ Snowflake Congrats! You scored {score}%</div>
+                                <div className="snowflakes" aria-hidden>
+                                    <span className="snowflake">❄</span>
+                                    <span className="snowflake">❄</span>
+                                    <span className="snowflake">❄</span>
+                                    <span className="snowflake">❄</span>
+                                    <span className="snowflake">❄</span>
+                                </div>
+                            </div>
+                        )}
 
                     <h2 className="result-title" data-testid="success-message">
                         {isSuccess ? '🎉 Congratulations!' : '😔 Not Quite Right'}
