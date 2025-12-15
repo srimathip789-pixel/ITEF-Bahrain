@@ -37,15 +37,6 @@ export default function PuzzleGame() {
         }
     }, [puzzleId]);
 
-    if (!puzzle) {
-        return (
-            <div className="puzzle-not-found">
-                <h2>Puzzle Not Found</h2>
-                <Link to="/puzzles" className="back-link">← Back to Puzzles</Link>
-            </div>
-        );
-    }
-
     // Trigger confetti on high score
     useEffect(() => {
         if (gameComplete && isSuccess && score >= 90) {
@@ -78,6 +69,17 @@ export default function PuzzleGame() {
             });
         }
     }, [gameComplete, isSuccess, score]);
+
+    if (!puzzle) {
+        return (
+            <div className="puzzle-not-found">
+                <h2>Puzzle Not Found</h2>
+                <Link to="/puzzles" className="back-link">← Back to Puzzles</Link>
+            </div>
+        );
+    }
+
+
 
     const handlePuzzleComplete = async (isCorrect: boolean, quizScore?: number) => {
         const timeSpent = Math.floor((Date.now() - startTime) / 1000);
