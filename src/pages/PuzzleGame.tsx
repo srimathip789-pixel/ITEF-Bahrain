@@ -109,7 +109,8 @@ export default function PuzzleGame() {
                     puzzle.id,
                     isCorrect,
                     user.name,
-                    user.email
+                    user.email,
+                    finalScore
                 );
             }
         } catch (error) {

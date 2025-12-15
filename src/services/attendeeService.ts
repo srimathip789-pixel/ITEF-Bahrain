@@ -87,7 +87,7 @@ export async function getAllAttendees(puzzleId?: string): Promise<Attendee[]> {
 
         // Convert map to array and sort by attemptCount descending
         const attendees = Array.from(attendeesMap.values());
-        return attendees.sort((a, b) => b.attemptCount - a.attemptCount);
+        return attendees.sort((a, b) => b.lastAttemptAt.getTime() - a.lastAttemptAt.getTime());
     } catch (error) {
         console.error('Error getting attendees:', error);
         return [];
