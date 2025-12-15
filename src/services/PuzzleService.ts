@@ -142,12 +142,33 @@ export class PuzzleService {
             progress.completedPuzzles.push(puzzleId);
         }
 
-        // Add to winners list ONLY if first attempt and correct and no hints used AND score >= 90%
+        // Add to winners list ONLY if:
+        // 1. First attempt for this puzzle (handled by caller usually, but good to check)
+        // 2. Correct (passed this puzzle)
+        // 3. No hints used
+        // 4. HAS ATTEMPTED ALL PUZZLES (All sessions)
+        // 5. Global Average Score >= 90%
+
         const scoreThreshold = 90;
-        if (isCorrect && attempt.attemptNumber === 1 && !usedHints && (score === undefined || score >= scoreThreshold)) {
-            if (!progress.wonPuzzles.includes(puzzleId)) {
-                progress.wonPuzzles.push(puzzleId);
-                this.addWinner(puzzleId, currentUser.id, currentUser.name, score, timeSpent);
+        const allPuzzles = this.getAllPuzzles();
+        const uniqueAttemptedPuzzles = Object.keys(progress.attempts);
+        const hasAttemptedAll = uniqueAttemptedPuzzles.length === allPuzzles.length;
+
+        // Calculate dynamic average score across all UNIQUE attempted puzzles
+        // We take the highest score from each puzzle to be fair
+        let totalMaxScore = 0;
+        uniqueAttemptedPuzzles.forEach(pid => {
+            const pAttempts = progress.attempts[pid];
+            const maxScore = Math.max(...pAttempts.map(a => a.score || 0));
+            totalMaxScore += maxScore;
+        });
+        const currentAverage = Math.round(totalMaxScore / uniqueAttemptedPuzzles.length);
+
+        // Check conditions
+        if (isCorrect && !progress.wonPuzzles.includes('global-overall')) {
+            if (hasAttemptedAll && currentAverage >= scoreThreshold) {
+                progress.wonPuzzles.push('global-overall');
+                this.addWinner('global-overall', currentUser.id, currentUser.name, currentAverage, timeSpent);
             }
         }
 

@@ -45,21 +45,7 @@
             - img [ref=e59]
             - generic [ref=e65]: Share
         - generic [ref=e67]:
-          - generic [ref=e68]:
-            - img "ITEF Bahrain" [ref=e69]
-            - img [ref=e70]
-            - heading "🏆 Winners List" [level=2] [ref=e76]
-            - paragraph [ref=e77]: First-time solvers who scored 90% or higher!
-          - generic [ref=e79]:
-            - generic [ref=e80]: 🥇
-            - generic [ref=e81]:
-              - generic [ref=e82]:
-                - img [ref=e83]
-                - text: Global Test User
-              - generic [ref=e86]:
-                - generic [ref=e87]:
-                  - img [ref=e88]
-                  - text: 12/15/2025 07:19 PM
-                - generic [ref=e91]: "Score: 100%"
-                - generic [ref=e92]: ⏱ 0m 1s
+          - img [ref=e68]
+          - heading "No Winners Yet!" [level=3] [ref=e74]
+          - paragraph [ref=e75]: Be the first to solve a puzzle correctly on the first try!
 ```

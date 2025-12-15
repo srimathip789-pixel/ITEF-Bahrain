@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllAttendees, type Attendee } from '../services/attendeeService';
 import { getWinners, getAllWinners, type Winner } from '../services/firebaseService';
+import { PuzzleService } from '../services/PuzzleService';
 
 interface LeaderboardProps {
     puzzleId?: string;
@@ -20,15 +21,81 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
         setLoadingWinners(true);
         const fetchWinners = async () => {
             try {
-                const data = puzzleId ? await getWinners(puzzleId) : await getAllWinners();
+                const firebaseData = puzzleId ? await getWinners(puzzleId) : await getAllWinners();
 
-                // Filter winners: only show 90%+ scores and deduplicate
+                // Also get local winners (for offline/testing support)
+                // We import PuzzleService dynamically or assuming it's available?
+                // It was imported in lines 1-3? No, need to check imports.
+
+                // Assuming I need to add the import.
+                // But first let's just merge.
+                // I'll need to add `import { PuzzleService } from '../services/PuzzleService';` at the top.
+                // But for this block:
+
+                const localWinners = puzzleId ? PuzzleService.getWinnersForPuzzle(puzzleId) : PuzzleService.getAllWinners();
+
+                // Merge and filter
                 const uniqueWinners = new Map<string, Winner>();
-                (data || []).forEach(winner => {
-                    const key = `${winner.email}_${winner.puzzleId}`;
-                    // Only add if score >= 90% and not already added (or if higher score)
+
+                // Add Firebase winners first
+                (firebaseData || []).forEach(winner => {
+                    // Only add if score >= 90%
                     if (winner.score >= 90) {
-                        uniqueWinners.set(key, winner);
+                        // If we are in "Global" mode (no specific puzzleId), we want 1 row per USER.
+                        // Priority: 'global-overall' > Highest Score > Latest Date
+                        const key = puzzleId ? `${winner.email}_${winner.puzzleId}` : winner.email;
+
+                        const existing = uniqueWinners.get(key);
+
+                        if (!existing) {
+                            uniqueWinners.set(key, winner);
+                        } else {
+                            // If we already have this user, check if this new entry is "better"
+                            // 1. Is new one 'global-overall'? Always take it.
+                            if (winner.puzzleId === 'global-overall' && existing.puzzleId !== 'global-overall') {
+                                uniqueWinners.set(key, winner);
+                            }
+                            // 2. If both are same type (or neither is global), take higher score
+                            else if (winner.score > existing.score) {
+                                uniqueWinners.set(key, winner);
+                            }
+                            // 3. If scores tie, take global-overall? (Handled by 1)
+                        }
+                    }
+                });
+
+                // Add/Merge Local winners
+                (localWinners || []).forEach(winner => {
+                    // Logic matches above: use email (or userId) as key if no specific puzzle filters
+                    const userParams = winner.userId || ''; // WinnerEntry likely has userId, not email directly if it's local type?
+                    // Check WinnerEntry type: userId, userName, timestamp, score, puzzleId.
+                    // My previous edit used winner.email which might not exist on WinnerEntry from PuzzleService.
+
+                    const key = puzzleId ? `${userParams}_${winner.puzzleId}` : userParams;
+
+                    // Only add if score >= 90%
+                    if ((winner.score || 0) >= 90) {
+                        const existing = uniqueWinners.get(key);
+
+                        // Construct potential new winner object
+                        const newWinnerObj: Winner = {
+                            name: winner.userName,
+                            email: userParams,
+                            puzzleId: winner.puzzleId,
+                            completedAt: new Date(winner.timestamp),
+                            score: winner.score || 0
+                        };
+
+                        if (!existing) {
+                            uniqueWinners.set(key, newWinnerObj);
+                        } else {
+                            // Compare
+                            if (newWinnerObj.puzzleId === 'global-overall' && existing.puzzleId !== 'global-overall') {
+                                uniqueWinners.set(key, newWinnerObj);
+                            } else if (newWinnerObj.score > existing.score && existing.puzzleId !== 'global-overall') {
+                                uniqueWinners.set(key, newWinnerObj);
+                            }
+                        }
                     }
                 });
 
@@ -182,8 +249,20 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                                                 #{index + 1}
                                             </span>
                                             <div>
-                                                <div style={{ color: 'white', fontWeight: 'bold' }}>
+                                                <div style={{ color: 'white', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                     {winner.name}
+                                                    {winner.puzzleId === 'global-overall' && (
+                                                        <span style={{
+                                                            fontSize: '0.7rem',
+                                                            backgroundColor: '#fbbf24',
+                                                            color: '#000',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px',
+                                                            fontWeight: 'bold'
+                                                        }}>
+                                                            GLOBAL CHAMPION
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <div style={{ color: '#64748b', fontSize: '0.875rem' }}>
                                                     {winner.email}
