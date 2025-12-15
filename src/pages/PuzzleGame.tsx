@@ -163,17 +163,34 @@ export default function PuzzleGame() {
                             <X size={64} className="failure-icon" />
                         )}
                     </div>
-                    {/* Snowflake congrats overlay for high scorers */}
+                    {/* Full screen snowfall for high scorers */}
                     {isSuccess && score >= 90 && (
-                        <div className="snowflake-overlay" aria-hidden={false}>
-                            <div className="snowflake-message">❄️ Snowflake Congrats! You scored {score}%</div>
-                            <div className="snowflakes" aria-hidden>
-                                <span className="snowflake">❄</span>
-                                <span className="snowflake">❄</span>
-                                <span className="snowflake">❄</span>
-                                <span className="snowflake">❄</span>
-                                <span className="snowflake">❄</span>
-                            </div>
+                        <div className="snowflake-overlay" aria-hidden="true">
+                            {/* Generate 50 snowflakes with random properties */}
+                            {[...Array(50)].map((_, i) => {
+                                const left = Math.random() * 100;
+                                const delay = Math.random() * 5;
+                                const duration = 3 + Math.random() * 5; // 3-8s fall
+                                const size = 10 + Math.random() * 20; // 10-30px
+                                const isBlue = Math.random() > 0.5; // 50% chance of blue
+
+                                return (
+                                    <span
+                                        key={i}
+                                        className="snowflake"
+                                        style={{
+                                            left: `${left}%`,
+                                            animationDelay: `${delay}s`,
+                                            animationDuration: `${duration}s`,
+                                            fontSize: `${size}px`,
+                                            color: isBlue ? '#60a5fa' : '#ffffff', // Blue-400 or White
+                                            opacity: 0.8
+                                        }}
+                                    >
+                                        ❄
+                                    </span>
+                                );
+                            })}
                         </div>
                     )}
 
