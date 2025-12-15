@@ -138,18 +138,28 @@ export async function trackAttempt(
     puzzleId: string,
     isSuccess: boolean,
     name?: string,
-    email?: string
+    email?: string,
+    score?: number // Added score parameter
 ): Promise<UserAttempt> {
     try {
         const attemptRef = doc(db, 'attempts', `${userId}_${puzzleId}`);
         const attemptDoc = await getDoc(attemptRef);
 
+        const currentScore = score !== undefined ? score : 0;
+
         if (attemptDoc.exists()) {
             // User has attempted before
             const data = attemptDoc.data();
+
+            // Append new score to existing scores array (or create it if missing)
+            const scores = data.scores || [];
+            scores.push(currentScore);
+
             await updateDoc(attemptRef, {
                 attemptCount: increment(1),
-                lastAttemptAt: serverTimestamp()
+                lastAttemptAt: serverTimestamp(),
+                scores: scores,
+                lastScore: currentScore
             });
 
             return {
@@ -173,7 +183,9 @@ export async function trackAttempt(
                 ...newAttempt,
                 name: name || 'Anonymous',
                 email: email || 'N/A',
-                lastAttemptAt: serverTimestamp()
+                lastAttemptAt: serverTimestamp(),
+                scores: [currentScore],
+                lastScore: currentScore
             });
 
             return newAttempt;

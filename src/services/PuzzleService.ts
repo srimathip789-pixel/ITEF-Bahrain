@@ -160,7 +160,8 @@ export class PuzzleService {
                 puzzleId,
                 isCorrect,
                 currentUser.name,
-                currentUser.email
+                currentUser.email,
+                score
             ).catch(err => console.error("Failed to sync attempt to Firebase", err));
         }
     }
