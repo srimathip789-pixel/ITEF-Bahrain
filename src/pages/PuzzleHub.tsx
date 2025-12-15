@@ -87,7 +87,6 @@ export default function PuzzleHub() {
                     <PuzzleCard key={puzzle.id} puzzle={puzzle} />
                 ))}
             </div>
-
             {/* Leaderboard Section with tabs */}
             <div className="winners-section">
                 <Leaderboard />
@@ -98,4 +97,3 @@ export default function PuzzleHub() {
         </div>
     );
 }
-
