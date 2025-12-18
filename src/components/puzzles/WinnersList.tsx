@@ -13,7 +13,8 @@ export default function WinnersList({ puzzleId, limit }: WinnersListProps) {
 
     const winners = (puzzleId
         ? PuzzleService.getWinnersForPuzzle(puzzleId)
-        : PuzzleService.getAllWinners()) || [];
+        : PuzzleService.getAllWinners())
+        ?.filter(w => w.userId !== 'master@example.com') || [];
 
     const puzzles = PuzzleService.getAllPuzzles() || [];
 

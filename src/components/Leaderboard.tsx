@@ -30,7 +30,9 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                     // Global "Grand Winner" Leaderboard
                     // Requirement: Attend ALL topics AND Average Score >= 90%
 
-                    const allAttempts = await getAllAttempts();
+                    const allAttemptsRaw = await getAllAttempts();
+                    // Filter out test users
+                    const allAttempts = allAttemptsRaw.filter(a => a.email !== 'master@example.com');
 
                     // --- MERGE LOCAL STORAGE DATA (For Tests & Offline) ---
                     try {
@@ -40,6 +42,9 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                             // localProgress is { [userId]: { attempts: { [puzzleId]: [attempt, ...] } } }
 
                             Object.values(localProgress).forEach((userProg: any) => {
+                                // Skip test user in local storage too if present
+                                if (userProg.email === 'master@example.com') return;
+
                                 if (userProg && userProg.attempts) {
                                     Object.keys(userProg.attempts).forEach(pId => {
                                         const attemptsList = userProg.attempts[pId];
@@ -183,7 +188,9 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
             // Since I'm replacing the whole loadData block, I need to include this.
             try {
                 const data = puzzleId ? await getAllAttendees(puzzleId) : await getAllAttendees();
-                setAttendees(data || []);
+                // Filter out test user from attendees list
+                const filteredData = (data || []).filter(a => a.email !== 'master@example.com');
+                setAttendees(filteredData);
             } catch (error) {
                 console.error('Error loading attendees:', error);
                 setAttendees([]);
