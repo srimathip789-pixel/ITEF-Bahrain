@@ -68,7 +68,13 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                     // -----------------------------------------------------
 
                     const allPuzzles = PuzzleService.getAllPuzzles();
-                    const totalPuzzles = allPuzzles.length;
+                    // Fallback to 10 if allPuzzles is empty (prevent divide by zero/empty filter)
+                    const totalPuzzles = (allPuzzles && allPuzzles.length > 0) ? allPuzzles.length : 10;
+
+                    console.log('Leaderboard Debug:', {
+                        totalPuzzles,
+                        attemptsCount: allAttempts.length
+                    });
 
                     const userMap = new Map<string, {
                         name: string,
@@ -111,20 +117,34 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
 
                     userMap.forEach(user => {
                         // Check if attempted all puzzles
-                        // We check the size of the scores map.
-                        // Note: This assumes valid puzzleIds. If old puzzleIds exist, this might count them.
-                        // Ideally we intersect with valid IDs.
-                        const validAttemptedCount = Array.from(user.scores.keys()).filter(pid =>
-                            allPuzzles.some(p => p.id === pid)
-                        ).length;
+                        // We check the size of the scores map against totalPuzzles
+
+                        // Filter user.scores keys to ensure they match valid puzzle IDs if known,
+                        // OR if we rely on the hardcoded count, just check the size of UNIQUE valid puzzles.
+
+                        let validAttemptedCount = 0;
+                        if (allPuzzles && allPuzzles.length > 0) {
+                            validAttemptedCount = Array.from(user.scores.keys()).filter(pid =>
+                                allPuzzles.some(p => p.id === pid)
+                            ).length;
+                        } else {
+                            // If allPuzzles missing, use raw count (risky but better than 0)
+                            validAttemptedCount = user.scores.size;
+                        }
+
+                        console.log(`Checking user: ${user.name} (${user.email}) - Attempts: ${validAttemptedCount}/${totalPuzzles}`);
 
                         if (validAttemptedCount >= totalPuzzles) {
                             // Calculate Average of Valid Puzzles
                             let totalScore = 0;
                             // Only sum scores for valid puzzles
-                            allPuzzles.forEach(p => {
-                                totalScore += (user.scores.get(p.id) || 0);
-                            });
+                            if (allPuzzles && allPuzzles.length > 0) {
+                                allPuzzles.forEach(p => {
+                                    totalScore += (user.scores.get(p.id) || 0);
+                                });
+                            } else {
+                                user.scores.forEach(score => totalScore += score);
+                            }
 
                             const avg = Math.round(totalScore / totalPuzzles);
 
