@@ -255,3 +255,29 @@ export async function getUserAttemptCount(userId: string, puzzleId: string): Pro
         return 0;
     }
 }
+
+// Get all attempts for all users (for global leaderboard calculation)
+export async function getAllAttempts(): Promise<(UserAttempt & { name: string; email: string; score: number; scores: number[] })[]> {
+    try {
+        const attemptsRef = collection(db, 'attempts');
+        const snapshot = await getDocs(attemptsRef);
+
+        return snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                puzzleId: data.puzzleId,
+                userId: data.userId,
+                attemptCount: data.attemptCount,
+                firstAttemptSuccess: data.firstAttemptSuccess,
+                lastAttemptAt: data.lastAttemptAt?.toDate() || new Date(),
+                name: data.name || 'Anonymous',
+                email: data.email || 'N/A',
+                score: data.lastScore || 0,
+                scores: data.scores || []
+            };
+        });
+    } catch (error) {
+        console.error('Error getting all attempts:', error);
+        return [];
+    }
+}

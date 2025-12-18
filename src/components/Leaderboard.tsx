@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllAttendees, type Attendee } from '../services/attendeeService';
-import { getWinners, getAllWinners, type Winner } from '../services/firebaseService';
+import { getWinners, getAllAttempts, type Winner } from '../services/firebaseService';
 import { PuzzleService } from '../services/PuzzleService';
 
 interface LeaderboardProps {
@@ -14,127 +14,140 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
     const [loadingWinners, setLoadingWinners] = useState(true);
     const [loadingAttendees, setLoadingAttendees] = useState(true);
 
-
-
     const loadData = useCallback(() => {
         // Load Winners
         setLoadingWinners(true);
         const fetchWinners = async () => {
             try {
-                const firebaseData = puzzleId ? await getWinners(puzzleId) : await getAllWinners();
+                if (puzzleId) {
+                    // Specific Puzzle Leaderboard
+                    const firebaseData = await getWinners(puzzleId);
+                    // Filter for > 90% and specific puzzle logic
+                    const filtered = firebaseData.filter(w => w.score >= 90);
+                    // Combine with local if needed, but for now relying on Firebase
+                    setWinners(filtered.sort((a, b) => b.score - a.score));
+                } else {
+                    // Global "Grand Winner" Leaderboard
+                    // Requirement: Attend ALL topics AND Average Score >= 90%
 
-                // Also get local winners (for offline/testing support)
-                // We import PuzzleService dynamically or assuming it's available?
-                // It was imported in lines 1-3? No, need to check imports.
+                    const allAttempts = await getAllAttempts();
 
-                // Assuming I need to add the import.
-                // But first let's just merge.
-                // I'll need to add `import { PuzzleService } from '../services/PuzzleService';` at the top.
-                // But for this block:
+                    // --- MERGE LOCAL STORAGE DATA (For Tests & Offline) ---
+                    try {
+                        const localStored = localStorage.getItem('puzzleProgress');
+                        if (localStored) {
+                            const localProgress = JSON.parse(localStored);
+                            // localProgress is { [userId]: { attempts: { [puzzleId]: [attempt, ...] } } }
 
-                const localWinners = puzzleId ? PuzzleService.getWinnersForPuzzle(puzzleId) : PuzzleService.getAllWinners();
-
-                // Merge and filter
-                const uniqueWinners = new Map<string, Winner>();
-
-                // Add Firebase winners first
-                (firebaseData || []).forEach(winner => {
-                    // Only add if score >= 90%
-                    if (winner.score >= 90) {
-                        // If we are in "Global" mode (no specific puzzleId), we want 1 row per USER.
-                        // Priority: 'global-overall' > Highest Score > Latest Date
-                        const key = puzzleId ? `${winner.email}_${winner.puzzleId}` : winner.email;
-
-                        const existing = uniqueWinners.get(key);
-
-                        if (!existing) {
-                            uniqueWinners.set(key, winner);
-                        } else {
-                            // If we already have this user, check if this new entry is "better"
-                            // 1. Is new one 'global-overall'? Always take it.
-                            if (winner.puzzleId === 'global-overall' && existing.puzzleId !== 'global-overall') {
-                                uniqueWinners.set(key, winner);
-                            }
-                            // 2. If both are same type (or neither is global), take higher score
-                            else if (winner.score > existing.score) {
-                                uniqueWinners.set(key, winner);
-                            }
-                            // 3. If scores tie, take global-overall? (Handled by 1)
+                            Object.values(localProgress).forEach((userProg: any) => {
+                                if (userProg && userProg.attempts) {
+                                    Object.keys(userProg.attempts).forEach(pId => {
+                                        const attemptsList = userProg.attempts[pId];
+                                        if (Array.isArray(attemptsList)) {
+                                            attemptsList.forEach((att: any) => {
+                                                allAttempts.push({
+                                                    puzzleId: pId,
+                                                    userId: userProg.userId || att.userId,
+                                                    attemptCount: att.attemptNumber || 1,
+                                                    firstAttemptSuccess: att.firstAttemptSuccess || false,
+                                                    lastAttemptAt: new Date(att.timestamp || Date.now()),
+                                                    name: userProg.userName || 'Local User',
+                                                    email: userProg.email || userProg.userId, // fallback to userId (email)
+                                                    score: att.score || 0,
+                                                    scores: [] // Local storage might not have scores history in same format, essentially flat here
+                                                });
+                                            });
+                                        }
+                                    });
+                                }
+                            });
                         }
+                    } catch (e) {
+                        console.error("Error parsing local storage progress", e);
                     }
-                });
+                    // -----------------------------------------------------
 
-                // Add/Merge Local winners
-                (localWinners || []).forEach(winner => {
-                    // Logic matches above: use email (or userId) as key if no specific puzzle filters
-                    const userParams = winner.userId || ''; // WinnerEntry likely has userId, not email directly if it's local type?
-                    // Check WinnerEntry type: userId, userName, timestamp, score, puzzleId.
-                    // My previous edit used winner.email which might not exist on WinnerEntry from PuzzleService.
+                    const allPuzzles = PuzzleService.getAllPuzzles();
+                    const totalPuzzles = allPuzzles.length;
 
-                    const key = puzzleId ? `${userParams}_${winner.puzzleId}` : userParams;
+                    const userMap = new Map<string, {
+                        name: string,
+                        email: string,
+                        scores: Map<string, number>, // puzzleId -> maxScore
+                        lastAttemptAt: Date
+                    }>();
 
-                    // Only add if score >= 90%
-                    if ((winner.score || 0) >= 90) {
-                        const existing = uniqueWinners.get(key);
+                    allAttempts.forEach(attempt => {
+                        const key = attempt.email; // Use email as unique identifier
+                        if (!key || key === 'N/A') return; // Skip invalid emails
 
-                        // Construct potential new winner object
-                        const newWinnerObj: Winner = {
-                            name: winner.userName,
-                            email: userParams,
-                            puzzleId: winner.puzzleId,
-                            completedAt: new Date(winner.timestamp),
-                            score: winner.score || 0
-                        };
+                        if (!userMap.has(key)) {
+                            userMap.set(key, {
+                                name: attempt.name,
+                                email: attempt.email,
+                                scores: new Map(),
+                                lastAttemptAt: attempt.lastAttemptAt
+                            });
+                        }
+                        const user = userMap.get(key)!;
 
-                        if (!existing) {
-                            uniqueWinners.set(key, newWinnerObj);
-                        } else {
-                            // Compare
-                            if (newWinnerObj.puzzleId === 'global-overall' && existing.puzzleId !== 'global-overall') {
-                                uniqueWinners.set(key, newWinnerObj);
-                            } else if (newWinnerObj.score > existing.score && existing.puzzleId !== 'global-overall') {
-                                uniqueWinners.set(key, newWinnerObj);
+                        // Update most recent time
+                        if (attempt.lastAttemptAt > user.lastAttemptAt) {
+                            user.lastAttemptAt = attempt.lastAttemptAt;
+                        }
+
+                        // Track max score for this puzzle
+                        // Some legacy records might not have scores array, fallback to score or 0
+                        const attemptScores = attempt.scores && attempt.scores.length > 0 ? attempt.scores : [attempt.score || 0];
+                        const currentMax = Math.max(...attemptScores);
+
+                        const recordedMax = user.scores.get(attempt.puzzleId) || 0;
+                        if (currentMax > recordedMax) {
+                            user.scores.set(attempt.puzzleId, currentMax);
+                        }
+                    });
+
+                    const globalWinners: Winner[] = [];
+
+                    userMap.forEach(user => {
+                        // Check if attempted all puzzles
+                        // We check the size of the scores map.
+                        // Note: This assumes valid puzzleIds. If old puzzleIds exist, this might count them.
+                        // Ideally we intersect with valid IDs.
+                        const validAttemptedCount = Array.from(user.scores.keys()).filter(pid =>
+                            allPuzzles.some(p => p.id === pid)
+                        ).length;
+
+                        if (validAttemptedCount >= totalPuzzles) {
+                            // Calculate Average of Valid Puzzles
+                            let totalScore = 0;
+                            // Only sum scores for valid puzzles
+                            allPuzzles.forEach(p => {
+                                totalScore += (user.scores.get(p.id) || 0);
+                            });
+
+                            const avg = Math.round(totalScore / totalPuzzles);
+
+                            if (avg >= 90) {
+                                globalWinners.push({
+                                    name: user.name,
+                                    email: user.email,
+                                    puzzleId: 'global-overall',
+                                    completedAt: user.lastAttemptAt,
+                                    score: avg
+                                });
                             }
                         }
-                    }
-                });
+                    });
 
-                // Add local winners via PuzzleService logic if needed (merged previously but maybe lost effectively in sync? 
-                // Wait, previous replace_file_content for leaderboard was interrupted or revert? No. 
-                // Ah, I need to check if my previous MERGE logic is present.
-                // In Step 95 I added merge logic.
-                // In the view_file output (Step 299), lines 25-37 show simple logic again? 
-                // Wait, Step 299 view_file shows simple logic. 
-                // Did I lose the merge logic?
-                // Step 95 applied it. Step 299 shows it... wait.
-                // Step 299 lines 25: const data = puzzleId ? await getWinners(puzzleId) : await getAllWinners();
-                // Then line 28: (data || []).forEach...
-                // IT SEEMS THE MERGE LOGIC IS MISSING in Step 299 view!
-                // Did I revert it?
-                // Step 95 applied it.
-                // Step 315 applied "sort attendees".
-                // Did I overwrite Leaderboard in Step 315? checking...
-                // No, Step 315 was just committing. Step 309 modified attendeeService.
-                // Step 95 modified Leaderboard.
-                // Step 299 view file shows NO merge logic?
-                // Let me re-read Step 299 output carefully.
-                // Lines 25-37: "const data = ... (data || []).forEach..."
-                // Yes, the merge logic is GONE or I am misremembering where it was.
-                // Maybe I edited the wrong file or git checkout reverted it?
-                // The user asked "is that changes where commited?" in Step 117.
-                // I might have lost it if I didn't save? No, replace_file_content saves.
-                // Maybe I am looking at a different version?
-                // Regardless, I should just fix the lint error validly. 
-                // I will restore the merge logic If I can, but the lint error is priority.
-                // Actually, I should stick to fixing lint first.
+                    // Sort by Score (Desc), then Time (Asc - whoever finished first/earliest updates?)
+                    // Usually highest score wins. If tie, maybe earliest completion?
+                    // User didn't specify tie-breaker, but standard is score.
+                    globalWinners.sort((a, b) => b.score - a.score);
 
-                // ... (rest of function) ...
+                    setWinners(globalWinners);
+                }
 
-                // Sort by score (highest first)
-                const sortedWinners = Array.from(uniqueWinners.values())
-                    .sort((a, b) => b.score - a.score);
-
-                setWinners(sortedWinners);
             } catch (error) {
                 console.error('Error loading winners:', error);
                 setWinners([]);
@@ -146,6 +159,8 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
         // Load Attendees
         setLoadingAttendees(true);
         const fetchAttendees = async () => {
+            // ... existing attendee logic matches original file ...
+            // Since I'm replacing the whole loadData block, I need to include this.
             try {
                 const data = puzzleId ? await getAllAttendees(puzzleId) : await getAllAttendees();
                 setAttendees(data || []);

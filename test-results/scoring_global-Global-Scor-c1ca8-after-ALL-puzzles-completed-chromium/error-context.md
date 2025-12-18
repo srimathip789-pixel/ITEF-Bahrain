@@ -1,0 +1,94 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - img "ITEF Bahrain" [ref=e6]
+  - main [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - link "Back to Puzzles" [ref=e10] [cursor=pointer]:
+          - /url: /puzzles
+          - img [ref=e11]
+          - text: Back to Puzzles
+        - generic [ref=e13]:
+          - generic [ref=e14]:
+            - generic [ref=e15]: ⚡
+            - heading "Electronics Fundamentals" [level=1] [ref=e16]
+          - paragraph [ref=e17]: Test your knowledge of basic electronic components and concepts
+          - generic [ref=e19]: "Attempt #2"
+        - button "Share" [ref=e21] [cursor=pointer]:
+          - img [ref=e22]
+          - generic [ref=e28]: Share
+      - generic [ref=e30]:
+        - img [ref=e32]
+        - generic:
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+          - generic: ❄
+        - heading "🎉 Congratulations!" [level=2] [ref=e35]
+        - generic [ref=e38]: 100%
+        - paragraph [ref=e39]:
+          - img [ref=e40]
+          - text: Amazing! You scored 100% on your first try and made it to the Winners List! 🎉
+        - generic [ref=e46]:
+          - img [ref=e47]
+          - generic [ref=e53]: You're now on the Winners List!
+        - generic [ref=e54]:
+          - link "Back to Puzzles" [ref=e55] [cursor=pointer]:
+            - /url: /puzzles
+          - button "Share" [ref=e57] [cursor=pointer]:
+            - img [ref=e58]
+            - generic [ref=e64]: Share
+        - generic [ref=e66]:
+          - img [ref=e67]
+          - heading "No Winners Yet!" [level=3] [ref=e73]
+          - paragraph [ref=e74]: Be the first to solve a puzzle correctly on the first try!
+```
