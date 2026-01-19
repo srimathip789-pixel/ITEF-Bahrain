@@ -1,0 +1,15 @@
+name: Prevent Source Code Changes
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+
+jobs:
+  check-source-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if source code is modified
+        run: |
+          echo "::error::Modifications to 'src/' are currently restricted. Please revert changes to source files."
+          exit 1

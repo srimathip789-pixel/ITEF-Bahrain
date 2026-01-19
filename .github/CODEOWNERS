@@ -1,0 +1,3 @@
+# Define ownership for source code
+# This restricts who can approve Pull Requests affecting these files
+src/ @srimathip789-pixel
