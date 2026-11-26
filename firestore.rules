@@ -1,0 +1,55 @@
+rules_version = '2';
+// Deploy with:  npx firebase-tools deploy --only firestore:rules
+// (or paste into Firebase Console → Firestore Database → Rules → Publish)
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function str(v, maxLen) { return v is string && v.size() > 0 && v.size() <= maxLen; }
+    function okScore(v)     { return v is number && v >= 0 && v <= 100; }
+
+    // ── Registrations: name / email / mobile ──
+    // Anyone can register, NOBODY can read them from the website.
+    // View them in Firebase Console (admins bypass rules there).
+    match /registrations/{email} {
+      allow read, delete: if false;
+      allow create, update: if request.resource.data.keys().hasOnly(['name','email','mobile','registeredAt','attemptCount'])
+        && str(request.resource.data.name, 80)
+        && str(request.resource.data.email, 120)
+        && request.resource.data.email == email
+        && str(request.resource.data.mobile, 20);
+    }
+
+    // ── Attempts: public for the leaderboard, so no raw emails allowed ──
+    match /attempts/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['puzzleId','userId','attemptCount','firstAttemptSuccess','lastAttemptAt','name','email','scores','lastScore'])
+        && !(request.resource.data.email.matches('.*@.*'))
+        && request.resource.data.attemptCount == 1
+        && id == request.resource.data.userId + '_' + request.resource.data.puzzleId
+        && str(request.resource.data.name, 80)
+        && okScore(request.resource.data.lastScore);
+      // Updates may only bump the counter by 1 and add a score — first-attempt result is locked.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['attemptCount','lastAttemptAt','scores','lastScore'])
+        && request.resource.data.attemptCount == resource.data.attemptCount + 1
+        && request.resource.data.scores.size() == resource.data.scores.size() + 1
+        && okScore(request.resource.data.lastScore);
+      allow delete: if false;
+    }
+
+    // ── Winners: only someone whose FIRST attempt succeeded, once, no edits ──
+    match /winners/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['name','email','puzzleId','completedAt','score'])
+        && !(request.resource.data.email.matches('.*@.*'))
+        && id == request.resource.data.email + '_' + request.resource.data.puzzleId
+        && request.resource.data.score >= 90 && okScore(request.resource.data.score)
+        && str(request.resource.data.name, 80)
+        && get(/databases/$(database)/documents/attempts/$(id)).data.firstAttemptSuccess == true
+        && get(/databases/$(database)/documents/attempts/$(id)).data.attemptCount == 1;
+      allow update, delete: if false;
+    }
+
+    // Everything else is closed.
+    match /{document=**} { allow read, write: if false; }
+  }
+}

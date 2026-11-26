@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { PuzzleService } from '../services/PuzzleService';
 import { addWinner, trackAttempt } from '../services/firebaseService';
+import { playerIdFor } from '../utils/privacy';
 import type { Puzzle } from '../types/PuzzleTypes';
 import { PuzzleType } from '../types/PuzzleTypes';
 import ConnectDotsPuzzle from '../components/puzzles/ConnectDotsPuzzle';
@@ -104,12 +105,13 @@ export default function PuzzleGame() {
             const userDetails = localStorage.getItem('itef_user_details');
             if (userDetails) {
                 const user = JSON.parse(userDetails);
+                const playerId = await playerIdFor(user.email || 'guest');
                 await trackAttempt(
-                    user.email || 'guest',
+                    playerId,           // anonymous ID — no raw email in public data
                     puzzle.id,
                     isCorrect,
                     user.name,
-                    user.email,
+                    playerId,
                     finalScore
                 );
             }
@@ -125,7 +127,7 @@ export default function PuzzleGame() {
                     const user = JSON.parse(userDetails);
                     await addWinner({
                         name: user.name || 'Anonymous',
-                        email: user.email || 'unknown@email.com',
+                        email: await playerIdFor(user.email || 'unknown'),  // anonymous ID
                         puzzleId: puzzle.id,
                         completedAt: new Date(),
                         score: finalScore
