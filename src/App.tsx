@@ -19,7 +19,8 @@ function App() {
           <Route path="/puzzles" element={<Layout><PuzzleHub /></Layout>} />
           <Route path="/puzzles/:puzzleId" element={<Layout><PuzzleGame /></Layout>} />
           <Route path="/puzzles/winners" element={<Layout><WinnersPage /></Layout>} />
-          <Route path="/answers" element={<AnswerKey />} />
+          {/* Answer key only available when running locally (npm run dev) — never on the live site */}
+          {import.meta.env.DEV && <Route path="/answers" element={<AnswerKey />} />}
           {/* Fallback route */}
           <Route path="*" element={<Layout><PuzzleHub /></Layout>} />
         </Routes>

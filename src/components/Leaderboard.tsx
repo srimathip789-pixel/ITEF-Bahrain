@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllAttempts, type Winner } from '../services/firebaseService';
+import { maskEmail } from '../utils/privacy';
 import { PuzzleService } from '../services/PuzzleService';
 
 interface LeaderboardProps {
@@ -322,7 +323,7 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                                                         )}
                                                     </div>
                                                     <div style={{ color: '#64748b', fontSize: '0.875rem' }}>
-                                                        {winner.email}
+                                                        {maskEmail(winner.email)}
                                                     </div>
                                                 </div>
                                             </div>
@@ -376,7 +377,7 @@ export default function Leaderboard({ puzzleId }: LeaderboardProps) {
                                                 <td style={{ padding: '12px', color: '#64748b', fontWeight: 'bold' }}>{index + 1}</td>
                                                 <td style={{ padding: '12px' }}>
                                                     <div style={{ fontWeight: 'bold' }}>{attendee.name}</div>
-                                                    <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{attendee.email}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{maskEmail(attendee.email)}</div>
                                                 </td>
                                                 <td style={{ padding: '12px', textAlign: 'center', fontSize: '1.1rem', fontWeight: 'bold', color: '#fbbf24' }}>
                                                     {attendee.topicsAttended}
